@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -22,12 +23,15 @@ class UserController extends Controller
             $request->merge(['password' => Hash::make($request->password)])
                 ->toArray());
         $User->assignRole('user');
+        if ($request->image) {
+            $User->addMediaFromRequest('image')->toMediaCollection('avatar');
+        }
         return response()->json('اطلاعات کاربر با موفقیت ثبت شد');
     }
 
     public function login(UserCreateRequest $request){
-        $User =User::select(['id','email', 'password'])
-            ->where('email', $request->email)
+        $User =User::select(['id','email', 'password' , 'username'])
+            ->where('email', $request->email)->orWhere('username' , $request->email)
             ->first(); //, 'phone_number'
         if(!$User){
             return response()->json('کاربر پیدا نشد');
@@ -46,49 +50,53 @@ class UserController extends Controller
 
     public function me(){
         $User = Auth::user();
-        return response()->json($User);
+        $media = $User->getMedia('avatar');
+        $url = $media[0]->getUrl();
+        return response()->json([$User, $url]);
     }
 
     public function delete(UserCreateRequest $request, $id = Null){
-        $User = $request->user();
-        if($User->hasAnyRole(['admin','super_admin'])){
             User::destroy($id);
+        return response()->json('کاربر با موفقیت حذف شد');
+    }
+
+    public function selfdelete(Request $request){
+        $User = $request->user();
+        if(!Hash::check($request->password , $User->password)){
+            return response()->json('رمز عبور اشتباه است');
         }
         else{
-            if(!Hash::check($request->password , $User->password)){
-                return response()->json('رمز عبور اشتباه است');
-            }
-            else{
-                User::where('id', $User->id)->delete();
-            }
+            User::where('id', $User->id)->delete();
+            return response()->json('کاربر با موفقیت حذف شد');
         }
-        return response()->json('کاربر با موفقیت حذف شد');
     }
 
     public function index(UserCreateRequest $request , $id = Null){
         $User = new User();
         if($id != Null){
             $User = $User->find($id)->first();
+            return response()->json($User);
+
         }
         $User = $User->OrderBy('id' , 'DESC')->paginate(10);
         return response()->json($User);
     }
 
-    public function editPassword(UserCreateRequest $request){
+    public function editPassword(Request $request){
         $User = $request->user();
-        if($User->pasword == $request->oldPassword){
+        if(!hash::check($request->password ,$User->password)){
             return response()->json('رمز اشتباه است');
         }
-        else{
-            User::where('id',$request->id)->update($request->only('password'));
+        User::where('id', $User->id)
+            ->update(['password' => Hash::make($request->new_password)]);
             Mail::to($User->email)->send(new restorePasswordMail($User));
             return response()->json('رمز با موفقیت تغییر یافت');
-        }
+
     }
 
     public function restorePassword(Request $request){
         $User = $request->user();
-        $code = random_int(0 , 10000);
+        $code = random_int(10000 , 99999);
         if($request->sent){
             Mail::to($User->email)->send(new restorePasswordMail($code));
             if(!$code == $request->code){
@@ -96,9 +104,31 @@ class UserController extends Controller
             }
             else{
                 User::where('id', $User->id)
-                    ->update(['pasword' => Hash::make($request->password)]);
+                    ->update(['password' => Hash::make($request->password)]);
                 return response()->json('رمز عبور با موفقیت تغییر یافت');
             }
         }
     }
+
+    public function edit(Request $request , $id){
+        $User = User::find($id);
+        $User->update($request->all());
+        return response()->json($User);
+    }
+
+    public function selfedit(Request $request ){
+        $User = $request->user();
+        User::where('id', $User->id)->update($request->all());
+        return response()->json($User);
+    }
+
+    public function profile(Request $request){
+        $User = $request->user();
+        if($request->image){
+            $delete = Media::where('model_type' , 'App\Models\User')->where('model_id' , $User->id)->delete();
+            $media = $User->addMediaFromRequest('image')->toMediaCollection('avatar');
+        }
+        return response()->json($media);
+    }
+
 }

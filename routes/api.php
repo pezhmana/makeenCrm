@@ -27,11 +27,14 @@ Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->nam
 
 Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-    Route::put('edit/{id?}', [UserController::class, 'edit'])->name('edit');
-    Route::delete('delete/{id?}', [UserController::class, 'delete'])->name('delete');
+    Route::put('edit/{id}', [UserController::class, 'edit'])->name('edit');
+    Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
+    Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+    Route::post('selfdelete', [UserController::class, 'selfdelete'])->name('selfdelete');
+    Route::post('profile', [UserController::class, 'profile'])->name('profile');
     Route::get('index/{id?}', [UserController::class, 'index'])->name('index');
     Route::post('restorePassword', [UserController::class, 'restorePassword'])->name('restorePassword');
-    Route::post('editPassword', [UserController::class, 'editPassword'])->name('editPassword');
+    Route::post('editpassword', [UserController::class, 'editPassword'])->name('editPassword');
 });
 
 Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){

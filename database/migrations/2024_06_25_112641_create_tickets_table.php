@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('ticket_name')->unique();
             $table->enum('support_tpye', ['','']);
+            $table->enum('priority', ['','']);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('ticket_id');
             $table->timestamps();

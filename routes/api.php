@@ -43,5 +43,12 @@ Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
 //   Route::post('create', [SettingController::class, 'create'])->name('create');
 //   Route::delete('delete{id}', [SettingController::class, 'delete'])->name('delete');
 });
+Route::group(['prefix'=>'products' , 'as'=>'products' , 'middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [\App\Http\Controllers\ProductController::class, 'create'])->name('create');
+    Route::get('index/{id?}', [\App\Http\Controllers\ProductController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [\App\Http\Controllers\ProductController::class, 'edit'])->name('edit');
+    Route::delete('delete/{id}', [\App\Http\Controllers\ProductController::class, 'delete'])->name('delete');
+
+});
 
 

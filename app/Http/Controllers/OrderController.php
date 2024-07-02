@@ -36,9 +36,5 @@ class OrderController extends Controller
         return response()->json($order);
 
     }
-//    public function detach (Request $request, $id){
-//        $order = order::find($id);
-//        $order->products()->detach($request->products_id);
-//        return response()->json($order);
-//    }
+
 }

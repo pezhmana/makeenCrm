@@ -23,6 +23,7 @@ class UserController extends Controller
             $request->merge(['password' => Hash::make($request->password)])
                 ->toArray());
 //        $User->assignRole('user');
+
         if ($request->image) {
             $User->addMediaFromRequest('image')->toMediaCollection('avatar');
         }

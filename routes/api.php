@@ -69,4 +69,3 @@ Route::group(['prefix'=>'orders' , 'as'=>'orders' , 'middleware'=>'auth:sanctum'
     Route::delete('delete/{id}', [\App\Http\Controllers\OrderController::class, 'delete'])->name('delete');
 
 });
-

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('ticket_name')->unique();
-            $table->enum('support_tpye', ['1','2']);
+            $table->enum('support_type', ['1','2']);
             $table->enum('priority', ['1','2']);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('ticket_id');

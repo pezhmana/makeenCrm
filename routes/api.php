@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -58,5 +61,3 @@ Route::group(['prefix'=>'posts' , 'as'=>'posts' , 'middleware'=>'auth:sanctum'],
     Route::delete('delete/{id}', [\App\Http\Controllers\PostController::class, 'delete'])->name('delete');
 
 });
-
-

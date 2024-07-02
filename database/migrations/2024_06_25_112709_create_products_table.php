@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('teacher_id');
             $table->text('description');
             $table->bigInteger('price');
-            $table->enum('type', ['', '', '']);
-            $table->enum('status', ['', '']);
+            $table->enum('type', ['1', '2', '3']);
+            $table->enum('status', ['1', '2']);
             $table->timestamps();
         });
     }

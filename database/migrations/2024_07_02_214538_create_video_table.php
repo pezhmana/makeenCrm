@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tickets', function (Blueprint $table) {
+        Schema::create('video', function (Blueprint $table) {
             $table->id();
-            $table->string('ticket_name')->unique();
-            $table->enum('support_tpye', ['1','2']);
-            $table->enum('priority', ['1','2']);
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('ticket_id');
+            $table->unsignedBigInteger('product_id');
+            $table->string('link');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tickets');
+        Schema::dropIfExists('vidio');
     }
 };

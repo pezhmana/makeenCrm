@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -43,5 +46,22 @@ Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
    Route::delete('delete{id}', [SettingController::class, 'delete'])->name('delete');
    Route::get('index/{id?}', [SettingController::class, 'index'])->name('index');
 });
-
+Route::group(['prefix'=>'products' , 'as'=>'products'],function (){
+   Route::post('create',[ProductController::class,'create'])->name('create');
+   Route::put('edit',[ProductController::class,'edit'])->name('edit');
+   Route::delete('delete',[ProductController::class,'delete'])->name('delete');
+   Route::get('index',[ProductController::class,'index'])->name('index');
+});
+Route::group(['prefix'=>'orders' , 'as'=>'orders'],function (){
+    Route::post('create',[OrderController::class,'create'])->name('create');
+    Route::put('edit',[OrderController::class,'edit'])->name('edit');
+    Route::delete('delete',[OrderController::class,'delete'])->name('delete');
+    Route::get('index',[OrderController::class,'index'])->name('index');
+});
+Route::group(['prefix'=>'posts' , 'as'=>'posts'],function (){
+    Route::post('create',[PostController::class,'create'])->name('create');
+    Route::put('edit',[PostController::class,'edit'])->name('edit');
+    Route::delete('delete',[PostController::class,'delete'])->name('delete');
+    Route::get('index',[PostController::class,'index'])->name('index');
+});
 

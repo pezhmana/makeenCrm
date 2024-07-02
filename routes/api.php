@@ -51,4 +51,12 @@ Route::group(['prefix'=>'products' , 'as'=>'products' , 'middleware'=>'auth:sanc
 
 });
 
+Route::group(['prefix'=>'posts' , 'as'=>'posts' , 'middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [\App\Http\Controllers\PostController::class, 'create'])->name('create');
+    Route::get('index/{id?}', [\App\Http\Controllers\PostController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [\App\Http\Controllers\PostController::class, 'edit'])->name('edit');
+    Route::delete('delete/{id}', [\App\Http\Controllers\PostController::class, 'delete'])->name('delete');
+
+});
+
 

@@ -24,22 +24,26 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::post('login', [UserController::class, 'login'])->name('login');
-Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
-Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->name('me');
-//    Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-    Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
-    Route::post('profile', [UserController::class, 'profile'])->name('profile');
-    Route::post('restorePassword', [UserController::class, 'restorePassword'])->name('restorePassword');
-    Route::post('editpassword', [UserController::class, 'editPassword'])->name('editPassword');
+
+
+
+
+
+    route::group(['prefix' => 'auth'], function () {
+        Route::post('login', [UserController::class, 'login'])->name('login');
+        Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
+        Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->name('me');
+        Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
+        Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
+        Route::post('profile', [UserController::class, 'profile'])->name('profile');
+    });
 
 
 Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],function(){
     Route::get('index/{id?}', [UserController::class, 'index'])->name('index');
     Route::put('edit/{id}', [UserController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
-    Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-//    Route::post('selfdelete', [UserController::class, 'selfdelete'])->name('selfdelete');
+    Route::post('editpassword', [UserController::class, 'editPassword'])->name('editPassword');
 });
 
 Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){

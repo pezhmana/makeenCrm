@@ -16,4 +16,8 @@ class Teacher extends Model
         'instagram' ,
         'telegram',
     ];
+
+    public function products(){
+        return $this->hasMany(Product::class);
+    }
 }

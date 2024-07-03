@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [UserController::class, 'login'])->name('login');
 Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
 Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->name('me');
-    Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
+//    Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
     Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
     Route::post('profile', [UserController::class, 'profile'])->name('profile');
     Route::post('restorePassword', [UserController::class, 'restorePassword'])->name('restorePassword');
@@ -37,6 +38,7 @@ Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],f
     Route::get('index/{id?}', [UserController::class, 'index'])->name('index');
     Route::put('edit/{id}', [UserController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+    Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
 //    Route::post('selfdelete', [UserController::class, 'selfdelete'])->name('selfdelete');
 });
 
@@ -68,4 +70,10 @@ Route::group(['prefix'=>'orders' , 'as'=>'orders' , 'middleware'=>'auth:sanctum'
     Route::put('edit/{id}', [\App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [\App\Http\Controllers\OrderController::class, 'delete'])->name('delete');
 
+});
+
+route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [CommentController::class, 'create'])->name('create');
+    Route::post('index', [CommentController::class, 'index'])->name('index');
+    route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
 });

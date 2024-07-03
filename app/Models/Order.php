@@ -13,4 +13,16 @@ class Order extends Model
         'user_id',
 
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function discount(){
+        return $this->belongsTo(Discount::class);
+    }
+
+    public function product(){
+        return $this->hasOne(product::class);
+    }
 }

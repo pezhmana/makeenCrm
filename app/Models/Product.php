@@ -32,5 +32,9 @@ class Product extends Model
     public function teacher(){
         return $this->hasOne(teacher::class);
     }
+
+    public function category(){
+        return $this->belongsTo(category::class);
+    }
 }
 

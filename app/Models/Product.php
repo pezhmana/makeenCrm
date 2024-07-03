@@ -22,7 +22,15 @@ class Product extends Model
     }
 
     public function comments(){
-        return $this->hasmany(comment::class);
+        return $this->morphMany(comment::class,'commentable');
+    }
+
+    public function order(){
+        return $this->belongsTo(order::class);
+    }
+
+    public function teacher(){
+        return $this->hasOne(teacher::class);
     }
 }
 

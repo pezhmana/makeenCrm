@@ -11,7 +11,21 @@ class Comment extends Model
     protected $fillable =[
         'description',
         'user_id',
-        'model_type',
-        'model_id',
+        'commentable_type',
+        'commentable_id',
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
+
+    public function post(){
+        return $this->belongsTo(Post::class);
+    }
 }
+
+

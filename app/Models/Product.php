@@ -20,5 +20,9 @@ class Product extends Model
     {
         return $this->hasmany(video::class);
     }
+
+    public function comments(){
+        return $this->hasmany(comment::class);
+    }
 }
 

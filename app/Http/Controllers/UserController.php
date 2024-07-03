@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserCreateRequest;
 use App\Mail\restorePasswordMail;
 use App\Models\User;
+use http\Env\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
-
+use function Laravel\Prompts\table;
 
 
 class UserController extends Controller
@@ -31,9 +33,11 @@ class UserController extends Controller
     }
 
     public function login(UserCreateRequest $request){
-        $User =User::select(['id','email', 'password' , 'username'])
-            ->where('email', $request->email)->orWhere('username' , $request->email)
-            ->first(); //, 'phone_number'
+        $type = $request->type;
+        if($type == 'signin'){
+        $User =User::select(['id','phone', 'password'])
+            ->where('phone', $request->phone)
+            ->first();
         if(!$User){
             return response()->json('کاربر پیدا نشد');
         }
@@ -42,6 +46,33 @@ class UserController extends Controller
         }
         $token = $User->createToken('token')->plainTextToken;
         return response()->json($token);
+        }
+        if($type == 'request'){
+            $number=rand(10000,99999);
+            $user = User::where('phone', $request->phone)->first();
+            if($user){
+            DB::table('code')->insert([
+                'code'=>$number,
+                'phone'=>$request->phone
+            ]);
+            return response()->json('کد تاییده با موفقیت ارسال شد');
+            }
+            else{
+                return Response()->json('شماره مورد نظر وجود ندارد');
+            }
+        }
+        if($type == 'received'){
+            $phoneCodes = DB::table('code')->where('phone', $request->phone)->where('code',$request->code);
+            if($phoneCodes->exists()){
+                $User = User::where('phone',$request->phone)->first();
+                $token = $User->createToken('token')->plainTextToken;
+                DB::table('code')->where('phone' , $request->phone)->delete();
+                return response()->json($token);
+            }
+            else{
+                return response()->json('کد یا شماره موبایل نامعتبر است');
+            }
+        }
     }
 
     public function logout(Request $request){
@@ -61,16 +92,6 @@ class UserController extends Controller
         return response()->json('کاربر با موفقیت حذف شد');
     }
 
-    public function selfdelete(Request $request){
-        $User = $request->user();
-        if(!Hash::check($request->password , $User->password)){
-            return response()->json('رمز عبور اشتباه است');
-        }
-        else{
-            User::where('id', $User->id)->delete();
-            return response()->json('کاربر با موفقیت حذف شد');
-        }
-    }
 
     public function index(UserCreateRequest $request , $id = Null){
         $User = new User();
@@ -93,22 +114,6 @@ class UserController extends Controller
             Mail::to($User->email)->send(new restorePasswordMail($User));
             return response()->json('رمز با موفقیت تغییر یافت');
 
-    }
-
-    public function restorePassword(Request $request){
-        $User = $request->user();
-        $code = random_int(10000 , 99999);
-        if($request->sent){
-            Mail::to($User->email)->send(new restorePasswordMail($code));
-            if(!$code == $request->code){
-                return response()->json('کد تاییدیه اشتباه است');
-            }
-            else{
-                User::where('id', $User->id)
-                    ->update(['password' => Hash::make($request->password)]);
-                return response()->json('رمز عبور با موفقیت تغییر یافت');
-            }
-        }
     }
 
     public function edit(Request $request , $id){

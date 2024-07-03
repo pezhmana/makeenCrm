@@ -15,4 +15,8 @@ class Post extends Model
         'description',
         'time',
         ];
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
 }

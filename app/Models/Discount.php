@@ -17,4 +17,8 @@ class Discount extends Model
         'Category_id' ,
         'order_id' ,
     ];
+
+    public function orders(){
+        return $this->hasMany(Order::class);
+    }
 }

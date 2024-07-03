@@ -16,4 +16,9 @@ class Product extends Model
         'type',
         'status'
     ];
+    public function video()
+    {
+        return $this->hasmany(video::class);
+    }
 }
+

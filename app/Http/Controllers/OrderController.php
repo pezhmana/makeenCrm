@@ -19,9 +19,9 @@ class OrderController extends Controller
             return response()->json($orders);
         }
     }
-    public function create(CreateOrdersRequest $request){
+    public function create(Request $request){
         $order = Order::create($request->toArray());
-        $order->products()->attach($request->products_id);
+//        $order->products()->attach($request->products_id);
         return response()->json($order);
     }
     public function edit(EditOrdersRequest $request,$id)

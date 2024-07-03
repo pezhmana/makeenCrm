@@ -34,6 +34,7 @@ Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],f
     Route::post('editPassword', [UserController::class, 'editPassword'])->name('editPassword');
 });
 
+
 Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
    Route::post('create', [SettingController::class, 'create'])->name('create');
    Route::put('edit/{id}', [SettingController::class, 'edit'])->name('edit');

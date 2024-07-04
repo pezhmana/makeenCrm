@@ -14,7 +14,8 @@ class Product extends Model
         'teacher_id',
         'price',
         'type',
-        'status'
+        'status',
+        'category_id'
     ];
     public function video()
     {

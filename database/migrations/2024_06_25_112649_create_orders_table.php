@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('sum');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('product_id');
             $table->timestamps();
         });
     }

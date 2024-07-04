@@ -13,4 +13,8 @@ class Order extends Model
         'user_id',
 
     ];
+    public function product()
+    {
+        return $this->hasOne(Order::class);
+    }
 }

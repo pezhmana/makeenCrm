@@ -16,4 +16,8 @@ class Product extends Model
         'type',
         'status'
     ];
+    public function order()
+    {
+        return $this->hasOne(Product::class);
+    }
 }

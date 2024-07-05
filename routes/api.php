@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
@@ -80,4 +81,12 @@ route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanc
     Route::post('create', [CommentController::class, 'create'])->name('create');
     Route::post('index', [CommentController::class, 'index'])->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
+});
+
+route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [CategoryController::class, 'create'])->name('create');
+    Route::post('add/{id}', [CategoryController::class, 'add'])->name('add');
+    Route::get('index/{id?}', [CategoryController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [CategoryController::class, 'edit'])->name('edit');
+    Route::delete('delete/{id}', [CategoryController::class, 'delete'])->name('delete');
 });

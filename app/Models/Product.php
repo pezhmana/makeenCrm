@@ -34,8 +34,8 @@ class Product extends Model
         return $this->hasOne(teacher::class);
     }
 
-    public function category(){
-        return $this->belongsTo(category::class);
+    public function categories(){
+        return $this->morphToMany(Category::class , 'categoryable');
     }
 }
 

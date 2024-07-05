@@ -23,13 +23,14 @@ class User extends Authenticatable implements HasMedia
      */
     protected $fillable = [
         'name',
-        'email',
+//        'email',
         'password',
         'new_password',
-        'username',
-        'national_code',
-        'birth_date',
+        'phone',
+//        'national_code',
+//        'birth_date',
         'last_name',
+        'code'
 
     ];
 
@@ -52,4 +53,21 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function tickets(){
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function posts(){
+        return $this->hasMany(Post::class);
+    }
 }

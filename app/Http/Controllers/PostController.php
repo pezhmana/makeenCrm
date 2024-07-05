@@ -2,38 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreatePostsRequest;
-use App\Http\Requests\EditPostsRequest;
 use App\Models\Post;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index($id = null){
-        if($id) {
-            $posts = post::where('id', $id)->first();
-
-            $posts = $posts->OrderBy('id', 'DESC')->paginate(10);
-
-
-            return response()->json($posts);
-        }
-    }
-    public function create(CreatePostsRequest $request){
-        $posts = Post::create($request->toArray());
-        $posts->products()->attach($request->products_id);
-        return response()->json($posts);
-    }
-
-    public function edit(EditPostsRequest $request , $id){
-        $posts = Post::find($id);
-        $posts->update($request->all());
-        return response()->json($posts);
-    }
-    public function delete($id)
+    public function create(Request $request)
     {
-        $posts = Post::destroy($id);
-        return response()->json($posts);
 
+        $post = post::create($request->toArray());
+        return response()->json($post);}
+
+
+    public function index($id = null) {
+        if($id){
+            $post = post::where('id', $id)->first();
+        }
+        else{
+            $post = post::orderby('id', 'desc')->paginate(3);
+        }
+        return response()->json($post);
+    }
+    public function edit(Request $request, $id){
+        $post = post::where('id', $id)->update($request->toArray());
+        return response()->json($post);
+    }
+    public function delete($id){
+        $post = post::where('id',  $id)->delete();
+        return response()->json($post);
     }
 }

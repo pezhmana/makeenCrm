@@ -15,4 +15,12 @@ class Post extends Model
         'description',
         'time',
         ];
+
+    public function comments(){
+        return $this->morphMany(comment::class,'commentable');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

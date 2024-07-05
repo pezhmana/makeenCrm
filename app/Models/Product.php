@@ -16,8 +16,29 @@ class Product extends Model
         'type',
         'status'
     ];
+
+
+    public function video()
+    {
+        return $this->hasmany(video::class);
+    }
+
+    public function comments(){
+        return $this->morphMany(comment::class,'commentable');
+    }
+
     public function order()
     {
-        return $this->hasOne(Product::class);
+        return $this->belongsTo(order::class);
+    }
+
+    public function teacher(){
+        return $this->hasOne(teacher::class);
+    }
+
+    public function category(){
+        return $this->belongsTo(category::class);
+
     }
 }
+

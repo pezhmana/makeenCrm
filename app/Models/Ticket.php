@@ -16,4 +16,12 @@ class Ticket extends Model
         'ticket_id'
 
     ];
+
+    public function messages(){
+        return $this->hasMany(Message::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+}
 }

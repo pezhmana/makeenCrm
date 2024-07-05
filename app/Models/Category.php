@@ -13,7 +13,7 @@ class Category extends Model implements HasMedia
 
     protected $fillable=[
       'name',
-        'category_id',
+
         'categoryable_id',
         "categoryable_type"
     ];

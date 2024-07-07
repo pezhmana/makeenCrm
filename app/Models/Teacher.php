@@ -15,6 +15,7 @@ class Teacher extends Model
         'description' ,
         'instagram' ,
         'telegram',
+        'message'
     ];
 
     public function products(){

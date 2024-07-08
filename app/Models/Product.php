@@ -17,6 +17,8 @@ class Product extends Model
         'status',
         'category_id'
     ];
+
+
     public function video()
     {
         return $this->hasmany(video::class);
@@ -26,7 +28,8 @@ class Product extends Model
         return $this->morphMany(comment::class,'commentable');
     }
 
-    public function order(){
+    public function order()
+    {
         return $this->belongsTo(order::class);
     }
 
@@ -36,6 +39,7 @@ class Product extends Model
 
     public function category(){
         return $this->belongsTo(category::class);
+
     }
 }
 

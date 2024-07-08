@@ -6,6 +6,7 @@ use App\Http\Requests\CreateOrdersRequest;
 use App\Http\Requests\EditOrdersRequest;
 use App\Models\order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -20,8 +21,9 @@ class OrderController extends Controller
         }
     }
     public function create(Request $request){
-        $order = order::create($request->toArray());
-//        $order->products()->attach($request->products_id);
+        $order = order::create($request->merge([
+            'user_id' => Auth::id()
+        ])->toArray());
         return response()->json($order);
     }
     public function edit(EditOrdersRequest $request,$id)

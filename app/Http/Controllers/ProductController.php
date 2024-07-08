@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -15,14 +16,26 @@ class ProductController extends Controller
 
 
     public function index($id = null) {
+        $product = new product();
         if($id){
-            $product = product::where('id', $id)->first();
+            $product =$product->where('id', $id)->first();
+            return response()->json($product);
         }
-        else{
-            $product = product::orderby('id', 'desc')->paginate(3);
+        if(request("most")){
+            $product= Order::select('product_id')
+                ->groupBy('product_id')
+                ->orderByRaw('COUNT(*) DESC')
+                ->limit(10)
+                ->paginate(10);
+            return response()->json($product);
         }
+        if(Request('search')){
+            $product = Product::where('name','like','%'.Request('search').'%');
+        }
+          $product =$product->orderby('id', 'desc')->paginate(10);
         return response()->json($product);
-    }
+        }
+
     public function edit(Request $request, $id){
         $product = product::where('id', $id)->update($request->toArray());
         return response()->json($product);

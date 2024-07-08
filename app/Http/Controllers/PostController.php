@@ -10,10 +10,16 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+
+
     public function create(Request $request)
     {
 
-        $post = post::create($request->toArray());
+        $post = Post::create($request->toArray());
+    if ($request->image) {
+
+        $post->addMediaFromRequest('image')->toMediaCollection('image');
+    }
         return response()->json($post);}
 
 

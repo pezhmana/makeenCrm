@@ -29,6 +29,9 @@ class ProductController extends Controller
                 ->paginate(10);
             return response()->json($product);
         }
+        if(Request('search')){
+            $product = Product::where('name','like','%'.Request('search').'%');
+        }
           $product =$product->orderby('id', 'desc')->paginate(10);
         return response()->json($product);
         }

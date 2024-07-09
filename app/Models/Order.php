@@ -15,6 +15,7 @@ class Order extends Model
 
     ];
 
+
     public function user(){
         return $this->belongsTo(User::class);
     }
@@ -23,7 +24,8 @@ class Order extends Model
         return $this->belongsTo(Discount::class);
     }
 
-    public function product(){
+    public function product()
+    {
         return $this->hasOne(product::class);
-    }
+}
 }

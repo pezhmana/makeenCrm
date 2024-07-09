@@ -84,6 +84,12 @@ class UserController extends Controller
         $User = Auth::user();
         $media = $User->getMedia('avatar');
         $url = $media[0]->getUrl();
+        if(Request('orders')){
+            $User = $User->orders()->get();
+        }
+        if(Request('products')){
+            $User = $User->orderProducts();
+        }
         return response()->json([$User, $url]);
     }
 

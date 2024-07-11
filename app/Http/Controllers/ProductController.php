@@ -32,12 +32,17 @@ class ProductController extends Controller
         if(Request('search')){
             $product = Product::where('name','like','%'.Request('search').'%');
         }
+<<<<<<< HEAD
         if(Request('exp')){
             $product = $product->orderByDesc('price')->get();
             return response()->json($product);
         }
         if(Request('asc')){
             $product = $product->orderBy('price', 'asc')->get();
+=======
+        if(Request('count')){
+            $product = Product::count();
+>>>>>>> e96524398f18e74bf81d744fa3e01f591f109b4c
             return response()->json($product);
         }
           $product =$product->orderby('id', 'desc')->paginate(10);

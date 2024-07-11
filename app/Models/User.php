@@ -14,7 +14,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class User extends Authenticatable implements HasMedia
 
 {
-    use HasApiTokens, HasFactory, Notifiable , HasRoles,  InteractsWithMedia;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -54,11 +54,13 @@ class User extends Authenticatable implements HasMedia
         'password' => 'hashed',
     ];
 
-    public function comments(){
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function tickets(){
+    public function tickets()
+    {
         return $this->hasMany(Ticket::class);
     }
 
@@ -67,7 +69,29 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Order::class);
     }
 
-    public function posts(){
+    public function posts()
+    {
         return $this->hasMany(Post::class);
+    }
+
+    public function userProduct()
+    {
+        return $this->hasManyThrough(Order::class, Product::class);
+    }
+
+    public function orderProducts(): array
+    {
+        $data = [];
+        $orders = $this->orders()->get();
+        foreach ($orders as $order) {
+            $data[] = $order->product;
+        }
+
+        return $data;
+    }
+
+    public function Labels()
+    {
+        return $this->morphToMany(Label::class, 'labelables')->withTimestamps();
     }
 }

@@ -83,14 +83,7 @@ route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanc
     Route::post('index', [CommentController::class, 'index'])->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
 });
-
-Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){
-    Route::post('create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('create');
-    Route::get('index', [\App\Http\Controllers\TeacherController::class, 'index'])->name('index');
-    Route::put('edit/{id}', [\App\Http\Controllers\TeacherController::class, 'edit'])->name('edit');
-    Route::delete('delete/{id}', [\App\Http\Controllers\TeacherController::class, 'delete'])->name('delete');
-});
-
+<<<<<<<<< Temporary merge branch 1
 
 route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sanctum'],function(){
     Route::post('create', [CategoryController::class, 'create'])->name('create');
@@ -98,11 +91,11 @@ route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sa
     Route::get('index/{id?}', [CategoryController::class, 'index'])->name('index');
     Route::put('edit/{id}', [CategoryController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [CategoryController::class, 'delete'])->name('delete');
+=========
+Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('create');
+    Route::get('index', [\App\Http\Controllers\TeacherController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [\App\Http\Controllers\TeacherController::class, 'edit'])->name('edit');
+    Route::delete('delete/{id}', [\App\Http\Controllers\TeacherController::class, 'delete'])->name('delete');
 
-});
-Route::group(['prefix'=>'discounts' , 'as'=>'discounts' , 'middleware'=>'auth:sanctum'],function(){
-    Route::post('create', [DiscountController::class, 'create'])->name('create');
-    Route::get('index', [DiscountController::class, 'index'])->name('index');
-    Route::put('edit/{id}', [DiscountController::class, 'edit'])->name('edit');
-    Route::delete('delete/{id}', [DiscountController::class, 'delete'])->name('delete');
 });

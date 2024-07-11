@@ -32,9 +32,18 @@ class ProductController extends Controller
         if(Request('search')){
             $product = Product::where('name','like','%'.Request('search').'%');
         }
+        if(Request('exp')){
+            $product = $product->orderByDesc('price')->get();
+            return response()->json($product);
+        }
+        if(Request('asc')){
+            $product = $product->orderBy('price', 'asc')->get();
+            return response()->json($product);
+        }
           $product =$product->orderby('id', 'desc')->paginate(10);
         return response()->json($product);
         }
+
 
     public function edit(Request $request, $id){
         $product = product::where('id', $id)->update($request->toArray());

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
@@ -82,7 +83,6 @@ route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanc
     Route::post('index', [CommentController::class, 'index'])->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
 });
-
 Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('create');
     Route::get('index', [\App\Http\Controllers\TeacherController::class, 'index'])->name('index');
@@ -98,6 +98,7 @@ route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sa
     Route::put('edit/{id}', [CategoryController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [CategoryController::class, 'delete'])->name('delete');
 
+
 });
 
 Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctum'],function(){
@@ -105,5 +106,17 @@ Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctu
     Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\TicketController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->name('delete');
+
+
+});
+
+route::group(['prefix'=>'label','as'=>'label','middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [LabelController::class, 'create'])->name('create');
+    Route::post('addFave', [LabelController::class, 'addFave'])->name('add');
+    Route::post('unFave',[LabelController::class, 'unFave'])->name('unFave');
+    Route::get('index/{id?}', [LabelController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [LabelController::class, 'edit'])->name('edit');
+    Route::delete('delete/{id}', [LabelController::class, 'delete'])->name('delete');
+
 
 });

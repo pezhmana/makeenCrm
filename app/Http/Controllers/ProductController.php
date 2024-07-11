@@ -32,9 +32,16 @@ class ProductController extends Controller
         if(Request('search')){
             $product = Product::where('name','like','%'.Request('search').'%');
         }
+
 //        if ($product->video){
 //            $product->addMediaFromRequest('viedo')->toMediaCollection('video');
 //        }
+
+        if(Request('count')){
+            $product = Product::count();
+            return response()->json($product);
+        }
+
           $product =$product->orderby('id', 'desc')->paginate(10);
 
         return response()->json($product);

@@ -17,8 +17,6 @@ class Product extends Model
         'status',
         'category_id'
     ];
-
-
     public function video()
     {
         return $this->hasmany(video::class);
@@ -28,14 +26,14 @@ class Product extends Model
         return $this->morphMany(comment::class,'commentable');
     }
 
-    public function order()
-    {
-        return $this->belongsTo(order::class);
+    public function orders(){
+        return $this->hasMany(Order::class);
     }
 
     public function teacher(){
         return $this->hasOne(teacher::class);
     }
+
 
 
 //    public function category()
@@ -48,5 +46,13 @@ class Product extends Model
             return $this->morphToMany(Category::class, 'categoryable');
 
         }
+
+
+
+    public function Labels()
+    {
+        return $this->morphToMany(Label::class, 'labelables');
+
     }
+}
 

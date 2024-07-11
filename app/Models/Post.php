@@ -30,4 +30,9 @@ class Post extends Model implements HasMedia
     public function categories(){
         return $this->morphToMany(Category::class , 'categoryable');
     }
+
+    public function Labels()
+    {
+        return $this->morphToMany(Label::class, 'labelables');
+    }
 }

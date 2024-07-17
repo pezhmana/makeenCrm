@@ -16,6 +16,7 @@ class permissionSeeder extends Seeder
     {
         $admin = Role::create(['name' => 'admin']);
         $user = Role::create(['name' => 'user']);
+        $student = Role::create(['name' => 'student']);
         $user_create = Permission::create(['name' => 'create.user']);
         $admin->givePermissionTo($user_create);
     }

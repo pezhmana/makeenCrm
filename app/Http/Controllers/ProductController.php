@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductsRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\rating;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -12,21 +17,25 @@ class ProductController extends Controller
     {
 
         $product = product::create($request->toArray());
+
         return response()->json($product);}
 
 
     public function index($id = null) {
         $product = new product();
+        $product = $product->withAvg('ratings','rating');
         if($id){
             $product =$product->where('id', $id)->first();
+            $product = $product->withAvg('ratings','rating')->get();
             return response()->json($product);
         }
         if(request("most")){
-            $product= Order::select('product_id')
+            $topProductIds = Order::select('product_id', DB::raw('COUNT(*) as total'))
                 ->groupBy('product_id')
-                ->orderByRaw('COUNT(*) DESC')
+                ->orderBy('total', 'DESC')
                 ->limit(10)
-                ->paginate(10);
+                ->pluck('product_id');
+            $product= Product::whereIn('id', $topProductIds)->get();
             return response()->json($product);
         }
         if(Request('search')){
@@ -36,7 +45,41 @@ class ProductController extends Controller
             $product = Product::count();
             return response()->json($product);
         }
-          $product =$product->orderby('id', 'desc')->paginate(10);
+        if(Request('member')){
+            $order =new order();
+            $product = $product->withCount('orders');
+        }
+        if(Request('discount')){
+            $product = $product->where('discount_price','!=',null);
+        }
+        if(Request('expensive')){
+            $product = $product->orderByDesc('price');
+        }
+        if(Request('cheap')){
+            $product = $product->orderBy('price','asc');
+        }
+        if(Request('free')){
+            $product =$product->where('price',0)->orWhere('discount_price',0);
+        }
+        if(Request('notfree')){
+            $product =$product->where('price','!=',0)->orWhere('discount_price','!=',0);
+        }
+        if(Request('category')){
+            $id =Request('category');
+            $product = Product::whereHas('categories',function (Builder $query)use($id){
+               $query->where('category_id', $id);
+            });
+        }
+        if(Request('rating')){
+            $product = rating::sum('rating');
+            $count = rating::count();
+            $product = $product*20;
+            $product = $product/$count.'%';
+            return response()->json($product);
+
+        }
+
+          $product =$product->paginate(10);
         return response()->json($product);
         }
 
@@ -48,4 +91,12 @@ class ProductController extends Controller
         $product = product::where('id',  $id)->delete();
         return response()->json($product);
     }
+
+    public function addmedia($id , Request $request){
+        $product = Product::find($id);
+        $video =$product->addMediaFromRequest('media')->toMediaCollection("$product->name.season$request->season");
+        return response()->json($video);
+    }
+
+
 }

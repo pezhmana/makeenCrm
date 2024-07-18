@@ -110,6 +110,15 @@ Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctu
 
 });
 
+Route::group(['prefix'=>'messages' , 'as'=>'messages' , 'middleware'=>'auth:sanctum'],function(){
+    Route::post('create', [\App\Http\Controllers\MessageController::class, 'create'])->name('create');
+    Route::get('index', [\App\Http\Controllers\MessageController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [\App\Http\Controllers\MessageController::class, 'edit'])->name('edit');
+    Route::delete('delete/{id}', [\App\Http\Controllers\MessageController::class, 'delete'])->name('delete');
+
+
+});
+
 route::group(['prefix'=>'label','as'=>'label','middleware'=>'auth:sanctum'],function(){
     Route::post('create', [LabelController::class, 'create'])->name('create');
     Route::post('addFave', [LabelController::class, 'addFave'])->name('add');

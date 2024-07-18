@@ -36,16 +36,17 @@ class Product extends Model
 
 
 
-//    public function category()
-//    {
-//        return $this->belongsTo(category::class);
 
 
-        public  function categories()
-        {
-            return $this->morphToMany(Category::class, 'categoryable');
+    public function categories()
+    {
+        return $this->morphToMany(Category::class, 'categoryable');
 
-        }
+    }
+
+
+
+
 
 
 

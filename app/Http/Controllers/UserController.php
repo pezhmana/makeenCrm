@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use function Laravel\Prompts\table;
 
@@ -106,6 +107,9 @@ class UserController extends Controller
             return response()->json($User);
 
         }
+        if(Request('students')){
+            $role =Role::findByName('user' , 'web')->count();
+        }
         $User = $User->OrderBy('id' , 'DESC')->paginate(10);
         return response()->json($User);
     }
@@ -141,6 +145,13 @@ class UserController extends Controller
             $media = $User->addMediaFromRequest('image')->toMediaCollection('avatar');
         }
         return response()->json($media);
+    }
+
+    public function dashboard(){
+        if(Request('students')){
+            $role =Role::findByName('user' , 'web')->count();
+        }
+        return response()->json($role);
     }
 
 }

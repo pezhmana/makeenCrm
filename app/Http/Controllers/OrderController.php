@@ -21,9 +21,17 @@ class OrderController extends Controller
         }
     }
     public function create(Request $request){
-        $order = order::create($request->merge([
-            'user_id' => Auth::id()
-        ])->toArray());
+        $user = Auth::user();
+        $exist = Order::where('user_id',$user->id)->where('product_id',$request->product_id);
+//        dd($exist);
+        if($exist->exists()){
+            $order = 'این سفارش قبلا ثبت شده';
+        }else{
+            $order = order::create($request->merge([
+                'user_id' => $user->id
+            ])->toArray());
+            $user->assignRole('student');
+        }
         return response()->json($order);
     }
     public function edit(EditOrdersRequest $request,$id)

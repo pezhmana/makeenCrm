@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
     protected $fillable = [
         'name',
         'description',
@@ -15,8 +17,11 @@ class Product extends Model
         'price',
         'type',
         'status',
-        'category_id'
+        'discount_price',
+        'category_id',
     ];
+
+
     public function video()
     {
         return $this->hasmany(video::class);
@@ -54,6 +59,10 @@ class Product extends Model
     {
         return $this->morphToMany(Label::class, 'labelables');
 
+    }
+
+    public function ratings(){
+        return $this->hasMany(rating::class);
     }
 }
 

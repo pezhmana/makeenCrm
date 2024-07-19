@@ -15,39 +15,41 @@ class ProductController extends Controller
         return response()->json($product);}
 
 
-    public function index($id = null) {
+    public function index($id = null)
+    {
         $product = new product();
-        if($id){
-            $product =$product->where('id', $id)->first();
+        if ($id) {
+            $product = $product->where('id', $id)->first();
             return response()->json($product);
         }
-        if(request("most")){
-            $product= Order::select('product_id')
+        if (request("most")) {
+            $product = Order::select('product_id')
                 ->groupBy('product_id')
                 ->orderByRaw('COUNT(*) DESC')
                 ->limit(10)
                 ->paginate(10);
             return response()->json($product);
         }
-        if(Request('search')){
-            $product = Product::where('name','like','%'.Request('search').'%');
+        if (Request('search')) {
+            $product = Product::where('name', 'like', '%' . Request('search') . '%');
         }
-<<<<<<< HEAD
-        if(Request('exp')){
+
+        if (Request('exp')) {
             $product = $product->orderByDesc('price')->get();
             return response()->json($product);
         }
-        if(Request('asc')){
+        if (Request('asc')) {
             $product = $product->orderBy('price', 'asc')->get();
-=======
-        if(Request('count')){
-            $product = Product::count();
->>>>>>> e96524398f18e74bf81d744fa3e01f591f109b4c
+
+            if (Request('count')) {
+                $product = Product::count();
+
+                return response()->json($product);
+            }
+            $product = $product->orderby('id', 'desc')->paginate(10);
             return response()->json($product);
         }
-          $product =$product->orderby('id', 'desc')->paginate(10);
-        return response()->json($product);
-        }
+    }
 
 
     public function edit(Request $request, $id){

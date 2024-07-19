@@ -94,4 +94,9 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->morphToMany(Label::class, 'labelables')->withTimestamps();
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }

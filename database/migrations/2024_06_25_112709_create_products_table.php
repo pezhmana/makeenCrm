@@ -20,7 +20,6 @@ return new class extends Migration
             $table->bigInteger('discount_price')->nullable();
             $table->enum('type', ['1', '2', '3']);
             $table->enum('status', ['1', '2']);
-            $table->unsignedBigInteger('category_id');
             $table->timestamps();
         });
     }

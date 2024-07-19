@@ -41,6 +41,10 @@ use Illuminate\Support\Facades\Route;
         Route::post('profile', [UserController::class, 'profile'])->name('profile');
     });
 
+    route::group(['prefix'=>'admin' , 'middleware'=>'auth:sanctum'], function () {
+        route::post('dashboard',[UserController::class , 'dashboard'])->name('dashboard');
+    });
+
 
 Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],function(){
     Route::get('index/{id?}', [UserController::class, 'index'])->name('index');
@@ -60,6 +64,7 @@ Route::group(['prefix'=>'products' , 'as'=>'products' , 'middleware'=>'auth:sanc
     Route::post('create', [\App\Http\Controllers\ProductController::class, 'create'])->name('create');
     Route::get('index/{id?}', [\App\Http\Controllers\ProductController::class, 'index'])->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\ProductController::class, 'edit'])->name('edit');
+    Route::Post('addmedia/{id}',[ProductController::class , 'addmedia'])->name('addmedia');
     Route::delete('delete/{id}', [\App\Http\Controllers\ProductController::class, 'delete'])->name('delete');
 
 });
@@ -109,4 +114,9 @@ route::group(['prefix'=>'label','as'=>'label','middleware'=>'auth:sanctum'],func
     Route::get('index/{id?}', [LabelController::class, 'index'])->name('index');
     Route::put('edit/{id}', [LabelController::class, 'edit'])->name('edit');
     Route::delete('delete/{id}', [LabelController::class, 'delete'])->name('delete');
+});
+
+route::group(['prefix'=>'rating', 'as'=>'rating' , 'middleware'=>'auth:sanctum'] ,function () {
+    route::post('add/{id}', [\App\Http\Controllers\RatingController::class, 'addrating'])->name('addrating');
+//    route::get('index/{id}', [\App\Http\Controllers\RatingController::class, 'index'])->name('index');
 });

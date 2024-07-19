@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserResourceCollection;
 use App\Mail\restorePasswordMail;
 use App\Models\User;
 use http\Env\Response;
@@ -149,8 +151,9 @@ class UserController extends Controller
 
     public function dashboard(){
         if(Request('students')){
-            $role =Role::findByName('user' , 'web')->count();
+            $role =Role::findByName('student' , 'web')->count();
         }
+
         return response()->json($role);
     }
 
@@ -173,6 +176,20 @@ class UserController extends Controller
         $user = User::where('phone',$request->phone)->first();
         $user= $user->assignRole('admin');
         return response()->json('رول ادمین با موفقیت داده شد');
+    }
+
+    public function adminIndex(){
+        $user = User::select(['id', 'phone', 'name', 'last_name'])
+            ->withSum('orders', 'sum')
+            ->withCount('orders')
+            ->with(['orders' => function($query) {
+                $query->latest('created_at')->first();
+            }])
+            ->get();
+        $user->makeVisible(['full_name']);
+        $user->makeHidden(['last_name', 'name']);
+        $user = new UserResourceCollection(User::all());
+        return response()->json($user);
     }
 
 }

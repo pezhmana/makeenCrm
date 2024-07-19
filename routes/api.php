@@ -41,7 +41,9 @@ use Illuminate\Support\Facades\Route;
     });
 
     route::group(['prefix'=>'admin' , 'middleware'=>'auth:sanctum'], function () {
-        route::post('dashboard',[UserController::class , 'dashboard'])->name('dashboard');
+        route::post('dashboard',[UserController::class , 'adminDashboard'])->name('dashboard');
+        route::post('login',[UserController::class ,'adminLogin'])->withoutMiddleware('auth:sanctum')->name('login');
+        route::post('assign',[UserController::class ,'adminAssign'])->name('assign');
     });
 
 
@@ -53,8 +55,8 @@ Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],f
 });
 
 Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
-   Route::get('index/{id}', [SettingController::class, 'index'])->name('index');
-   Route::put('edit/{id}', [SettingController::class, 'edit'])->name('edit');
+   Route::get('index/{key?}', [SettingController::class, 'index'])->name('index');
+   Route::put('edit/{key}', [SettingController::class, 'edit'])->name('edit');
 //   Route::post('create', [SettingController::class, 'create'])->name('create');
 //   Route::delete('delete{id}', [SettingController::class, 'delete'])->name('delete');
 });

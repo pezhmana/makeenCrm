@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
-            $table->string('value');
+            $table->string('ticket_name')->unique();
+            $table->enum('support_type', ['1','2']);
+            $table->enum('priority', ['1','2']);
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('ticket_id');
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('tickets');
     }
 };

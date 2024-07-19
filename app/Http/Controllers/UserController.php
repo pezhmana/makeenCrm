@@ -154,4 +154,25 @@ class UserController extends Controller
         return response()->json($role);
     }
 
+    public function adminLogin(UserCreateRequest $request)
+    {
+        $user = User::where('phone',$request->phone)->first();
+        if(!hash::check($request->password ,$user->password )){
+            return response()->json('رمز ورود اشتباه است');
+        }else{
+            if($user->hasRole('admin')){
+                $token =$user->createToken('token')->plainTextToken;
+            }else{
+                $token = 'شما اجازه مورد نیاز را ندارید';
+            }
+        }
+        return response()->json($token);
+    }
+
+    public function adminAssign(UserCreateRequest $request){
+        $user = User::where('phone',$request->phone)->first();
+        $user= $user->assignRole('admin');
+        return response()->json('رول ادمین با موفقیت داده شد');
+    }
+
 }

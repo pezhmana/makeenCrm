@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrdersRequest;
 use App\Http\Requests\EditOrdersRequest;
+use App\Models\Discount;
 use App\Models\order;
+use App\Models\Product;
+use Faker\Core\Number;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -22,15 +27,45 @@ class OrderController extends Controller
     }
     public function create(Request $request){
         $user = Auth::user();
+        $product = Product::where('id',$request->product_id)->first();
         $exist = Order::where('user_id',$user->id)->where('product_id',$request->product_id);
-//        dd($exist);
         if($exist->exists()){
             $order = 'این سفارش قبلا ثبت شده';
-        }else{
-            $order = order::create($request->merge([
-                'user_id' => $user->id
-            ])->toArray());
-            $user->assignRole('student');
+        }else {
+            if ($request->discount) {
+                $discount = Discount::where('code', $request->discount)->first();
+                if (!$discount) {
+                    return Response()->json('کد تخفیف نامعتبر است');
+                } else {
+                    $percent = $discount->percent;
+                    $percent = $percent / 100;
+                    if ($product->discount_price != null) {
+                        $order = order::create($request->merge([
+                            'user_id' => $user->id,
+                            'sum' => $product->discount_price - ($product->discount_price * $percent)
+                        ])->toArray());
+                    } else {
+                        $order = order::create($request->merge([
+                            'user_id' => $user->id,
+                            'sum' => $product->price - ($product->price * $percent)
+                        ])->toArray());
+                    }
+                  Discount::where('code', $request->discount)->decrement('amount');
+                }
+            } else {
+                if ($product->discount_price != null) {
+                    $order = order::create($request->merge([
+                        'user_id' => $user->id,
+                        'sum' => $product->discount_price
+                    ])->toArray());
+                } else {
+                    $order = order::create($request->merge([
+                        'user_id' => $user->id,
+                        'sum' => $product->price
+                    ])->toArray());
+                }
+                $user->assignRole('student');
+            }
         }
         return response()->json($order);
     }

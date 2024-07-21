@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Discount;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class deleteDiscountCommand extends Command
@@ -27,5 +28,6 @@ class deleteDiscountCommand extends Command
     public function handle()
     {
         Discount::where('amount',0)->delete();
+        Discount::whereDate('to','<',Carbon::now())->delete();
     }
 }

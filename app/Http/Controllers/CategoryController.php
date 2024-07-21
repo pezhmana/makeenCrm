@@ -15,7 +15,7 @@ class CategoryController extends Controller
     public function create(CreateCategoriesRequest $request){
         $categories = Category::create($request->toArray());
         if($request->icon){
-            $categories->addMediaFromRequest('icon')->toMediaCollection('icon');
+            $categories->addMediaFromRequest('icon')->toMediaCollection('category.icon');
         }
         if($request->category_id){
             $categories->category()->attach($request->category_id);
@@ -25,6 +25,7 @@ class CategoryController extends Controller
 
     public function index($id = null){
         $category = new Category();
+        $category = $category->with('category');
         if($id){
             $Category =$category->where('id',$id)->first();
             return response()->json($Category);

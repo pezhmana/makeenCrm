@@ -17,16 +17,19 @@ class ProductController extends Controller
     {
 
         $product = product::create($request->toArray());
+        if($request->image){
+            $product->addMediaFromRequest('image')->toMediaCollection("product.image");
+        }
 
         return response()->json($product);}
 
 
     public function index($id = null) {
         $product = new product();
-        $product = $product->withAvg('ratings','rating');
+        $product = $product->withAvg('ratings','rating')->with('categories');
         if($id){
             $product =$product->where('id', $id)->first();
-            $product = $product->withAvg('ratings','rating')->get();
+            $product = $product->withAvg('ratings','rating')->with('categories')->get();
             return response()->json($product);
         }
         if(request("most")){

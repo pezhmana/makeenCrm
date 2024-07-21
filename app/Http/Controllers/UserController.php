@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Resources\OrderIndexResource;
+use App\Http\Resources\OrderResourceCollection;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResourceCollection;
 use App\Mail\restorePasswordMail;
+use App\Models\Order;
 use App\Models\User;
 use http\Env\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -179,17 +182,12 @@ class UserController extends Controller
     }
 
     public function adminIndex(){
-        $user = User::select(['id', 'phone', 'name', 'last_name'])
-            ->withSum('orders', 'sum')
-            ->withCount('orders')
-            ->with(['orders' => function($query) {
-                $query->latest('created_at')->first();
-            }])
-            ->get();
-        $user->makeVisible(['full_name']);
-        $user->makeHidden(['last_name', 'name']);
         $user = new UserResourceCollection(User::all());
         return response()->json($user);
     }
 
+    public function adminOrderIndex(){
+        $order = new OrderResourceCollection(Order::all());
+        return response()->json($order);
+    }
 }

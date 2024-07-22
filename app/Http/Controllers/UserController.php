@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Resources\OrderIndexResource;
+use App\Http\Resources\OrderResourceCollection;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserResourceCollection;
 use App\Mail\restorePasswordMail;
+use App\Models\Order;
 use App\Models\User;
 use http\Env\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -149,9 +154,40 @@ class UserController extends Controller
 
     public function dashboard(){
         if(Request('students')){
-            $role =Role::findByName('user' , 'web')->count();
+            $role =Role::findByName('student' , 'web')->count();
         }
+
         return response()->json($role);
     }
 
+    public function adminLogin(UserCreateRequest $request)
+    {
+        $user = User::where('phone',$request->phone)->first();
+        if(!hash::check($request->password ,$user->password )){
+            return response()->json('رمز ورود اشتباه است');
+        }else{
+            if($user->hasRole('admin')){
+                $token =$user->createToken('token')->plainTextToken;
+            }else{
+                $token = 'شما اجازه مورد نیاز را ندارید';
+            }
+        }
+        return response()->json($token);
+    }
+
+    public function adminAssign(UserCreateRequest $request){
+        $user = User::where('phone',$request->phone)->first();
+        $user= $user->assignRole('admin');
+        return response()->json('رول ادمین با موفقیت داده شد');
+    }
+
+    public function adminIndex(){
+        $user = new UserResourceCollection(User::all());
+        return response()->json($user);
+    }
+
+    public function adminOrderIndex(){
+        $order = new OrderResourceCollection(Order::all());
+        return response()->json($order);
+    }
 }

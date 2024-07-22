@@ -9,13 +9,12 @@ class Discount extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'Amount',
-        'Code' ,
-        'From' ,
-        'To' ,
-        'Percent' ,
-        'Category_id' ,
-        'order_id' ,
+        'amount',
+        'code' ,
+        'from' ,
+        'to' ,
+        'percent' ,
+        'name'
     ];
 
     public function orders(){

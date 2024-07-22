@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->integer('amount');
             $table->string('code')->unique();
             $table->integer('percent');
-            $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('order_id');
             $table->date('from');
             $table->date('to');
             $table->timestamps();

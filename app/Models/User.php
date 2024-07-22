@@ -41,6 +41,7 @@ class User extends Authenticatable implements HasMedia
      */
     protected $hidden = [
         'password',
+        'full_name',
         'remember_token',
     ];
 
@@ -99,4 +100,13 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Rating::class);
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->name.' '.$this->last_name;
+    }
+
+    protected $appends=[
+        'full_name'
+    ];
 }

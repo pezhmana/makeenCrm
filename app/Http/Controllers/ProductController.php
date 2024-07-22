@@ -31,7 +31,7 @@ class ProductController extends Controller
             return response()->json($product);
         }
         if (request("most")) {
-            $topProduct Ids = Order::select('product_id', DB::raw('COUNT(*) as total'))
+            $topProductIds = Order::select('product_id', DB::raw('COUNT(*) as total'))
                 ->groupBy('product_id')
                 ->orderBy('total', 'DESC')
                 ->limit(10)
@@ -71,18 +71,18 @@ class ProductController extends Controller
                $query->where('category_id', $id);
             });
         }
-        if(Request('rating')){
+        if(Request('rating')) {
             $product = rating::sum('rating');
             $count = rating::count();
-            $product = $product*20;
-            $product = $product/$count.'%';
+            $product = $product * 20;
+            $product = $product / $count . '%';
             return response()->json($product);
 
         }
 
           $product =$product->paginate(10);
         return response()->json($product);
-        }
+
     }
 
 

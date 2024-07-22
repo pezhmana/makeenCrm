@@ -94,8 +94,7 @@ route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanc
     Route::post('index', [CommentController::class, 'index'])->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
 });
-<<<<<<< HEAD
-=======
+
 Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('create');
     Route::get('index/{id?}', [\App\Http\Controllers\TeacherController::class, 'index'])->name('index');
@@ -103,7 +102,7 @@ Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanc
     Route::delete('delete/{id}', [\App\Http\Controllers\TeacherController::class, 'delete'])->name('delete');
 
 });
->>>>>>> 8a9c9dbaa21c6b5b138fa2ade7a2139f65cff89e
+
 
 route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sanctum'],function(){
     Route::post('create', [CategoryController::class, 'create'])->name('create');

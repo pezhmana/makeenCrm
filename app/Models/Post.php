@@ -35,4 +35,16 @@ class Post extends Model implements HasMedia
     {
         return $this->morphToMany(Label::class, 'labelables');
     }
+
+    public function getPostimageAttribute()
+    {
+       $image = $this->getMedia('post'.'image')->last();
+       if($image){
+           $Url = $image->getUrl();
+       }else{
+           $Url = null;
+       }
+       return $Url;
+
+    }
 }

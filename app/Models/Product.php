@@ -20,6 +20,23 @@ class Product extends Model implements HasMedia
         'discount_price',
         'category_id',
     ];
+    protected $appends=[
+        'product_image'
+    ];
+
+    protected $hidden=[
+      'media'
+    ];
+
+    public function getProductImageAttribute(){
+        $image=  $this->getMedia('product.image')->last();
+        if($image){
+            $Url = $image->getUrl();
+        }else{
+            $Url=null;
+        }
+        return $Url;
+    }
 
 
     public function video()

@@ -11,12 +11,16 @@ class TeacherController extends Controller
     {
 
         $teacher = Teacher::create($request->toArray());
+        if($request->image){
+            $teacher->addMediaFromRequest('image')->toMediaCollection('teacher.image');
+        }
         return response()->json($teacher);
     }
 
 
     public function index($id = null)
     {
+
         if ($id) {
             $teacher = Teacher::where('id', $id)->first();
         } else {

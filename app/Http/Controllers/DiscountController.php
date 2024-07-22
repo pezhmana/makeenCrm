@@ -13,8 +13,6 @@ class DiscountController extends Controller
         $discount = Discount::create($request->toArray());
         return response()->json($discount);
     }
-
-
     public function index($id = null)
     {
         if ($id) {

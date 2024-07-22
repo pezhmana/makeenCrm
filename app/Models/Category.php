@@ -13,11 +13,28 @@ class Category extends Model implements HasMedia
 
     protected $fillable=[
       'name',
-
         'categoryable_id',
         "categoryable_type"
     ];
 
+    protected $hidden=[
+        'media'
+    ];
+
+
+    public function getCategoryIconAttribute(){
+        $image=  $this->getMedia('category.icon')->last();
+        if($image){
+            $Url = $image->getUrl();
+        }else{
+            $Url=null;
+        }
+        return $Url;
+    }
+
+    protected $appends=[
+        'category_icon'
+    ];
     public function products(){
         return $this->morphedByMany(Product::class , 'categoryable');
     }

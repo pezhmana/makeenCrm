@@ -56,13 +56,26 @@ class Product extends Model implements HasMedia
         return $this->hasOne(teacher::class);
     }
 
-    public function categories(){
-        return $this->morphToMany(Category::class , 'categoryable');
+
+
+
+
+    public function categories()
+    {
+        return $this->morphToMany(Category::class, 'categoryable');
+
     }
+
+
+
+
+
+
 
     public function Labels()
     {
         return $this->morphToMany(Label::class, 'labelables');
+
     }
 
     public function ratings(){

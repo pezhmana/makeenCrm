@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductsRequest;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\rating;
@@ -19,6 +20,11 @@ class ProductController extends Controller
         $product = product::create($request->toArray());
         if($request->image){
             $product->addMediaFromRequest('image')->toMediaCollection("product.image");
+        }
+
+        if($request->suggest){
+            $id= Category::where('name','suggest')->first()->id;
+            $product->categories()->attach($id);
         }
 
         return response()->json($product);}
@@ -70,7 +76,7 @@ class ProductController extends Controller
         if(Request('category')){
             $id =Request('category');
             $product = Product::whereHas('categories',function (Builder $query)use($id){
-               $query->where('category_id', $id);
+               $query->where('name', $id);
             });
         }
         if(Request('rating')){

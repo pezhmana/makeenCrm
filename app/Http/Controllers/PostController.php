@@ -12,8 +12,10 @@ class PostController extends Controller
 {
     public function create(Request $request)
     {
-
         $post = post::create($request->toArray());
+        if ($request->image) {
+            $post->addMediaFromRequest('image')->toMediaCollection('post.image');
+        }
         return response()->json($post);}
 
 

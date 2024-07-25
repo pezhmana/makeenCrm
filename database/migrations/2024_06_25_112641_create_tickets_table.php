@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->string('ticket_name')->unique();
-            $table->enum('support_type', ['1','2']);
-            $table->enum('priority', ['1','2']);
+            $table->string('ticket_name');
+            $table->enum('priority', ['imprtant','normal'])->default('normal');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('ticket_id');
+            $table->text('description');
+            $table->enum('status',['open','running','answered','closed'])->default('open');
             $table->timestamps();
         });
     }

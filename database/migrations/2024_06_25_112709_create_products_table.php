@@ -18,8 +18,6 @@ return new class extends Migration
             $table->text('description');
             $table->bigInteger('price');
             $table->bigInteger('discount_price')->nullable();
-            $table->enum('type', ['1', '2', '3']);
-            $table->enum('status', ['1', '2']);
             $table->timestamps();
         });
     }

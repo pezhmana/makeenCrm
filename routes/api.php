@@ -118,6 +118,7 @@ Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctu
     Route::post('create', [\App\Http\Controllers\TicketController::class, 'create'])->name('create');
     Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\TicketController::class, 'edit'])->name('edit');
+    Route::get('userticket', [\App\Http\Controllers\TicketController::class, 'userTicket'])->name('index');
     Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->name('delete');
 
 

@@ -17,8 +17,7 @@ class PostController extends Controller
 
         $post = Post::create($request->toArray());
     if ($request->image) {
-
-        $post->addMediaFromRequest('image')->toMediaCollection('image');
+        $post->addMediaFromRequest('image')->toMediaCollection('post.image');
     }
         return response()->json($post);}
 

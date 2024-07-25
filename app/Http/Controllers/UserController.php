@@ -96,6 +96,9 @@ class UserController extends Controller
         if(Request('products')){
             $User = $User->orderProducts();
         }
+        if(Request('like')){
+            $User = $User->labelProducts();
+        }
         return response()->json([$User, $url]);
     }
 

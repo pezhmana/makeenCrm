@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Discount;
 use Illuminate\Http\Request;
+use Psy\Util\Str;
 
 class DiscountController extends Controller
 {
     public function create(Request $request)
     {
-
-        $discount = Discount::create($request->toArray());
+        $random = bin2hex(random_bytes(3));
+        $discount = Discount::create($request->merge([
+            'code'=>$random
+        ])->toArray());
         return response()->json($discount);
     }
     public function index($id = null)

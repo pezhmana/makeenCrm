@@ -17,5 +17,12 @@ class SettingTableSeeder extends Seeder
             ['key'=>'site_name','value'=>'Makeen Project'],
             ['key'=>'site_description','value'=>'Makeen offline'],
         ]);
+
+        DB::table('labels')->insert([
+            'name'=>'favorite'
+        ]);
+        DB::table('categories')->insert([
+            ['name'=>'suggest']
+        ]);
     }
 }

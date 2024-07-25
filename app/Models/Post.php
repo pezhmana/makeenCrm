@@ -4,17 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+<<<<<<< HEAD
+=======
+use Spatie\MediaLibrary\HasMedia;
+>>>>>>> 45c2223632ead2a1e24d3a0cf0fc260c4b32357d
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
+<<<<<<< HEAD
     use HasFactory,InteractsWithMedia;
+=======
+    use HasFactory ,InteractsWithMedia;
+>>>>>>> 45c2223632ead2a1e24d3a0cf0fc260c4b32357d
     protected $fillable=[
         'name',
         'user_id',
         'short',
         'description',
         'time',
+
         ];
 
     public function comments(){
@@ -32,5 +41,17 @@ class Post extends Model
     public function Labels()
     {
         return $this->morphToMany(Label::class, 'labelables');
+    }
+
+    public function getPostimageAttribute()
+    {
+       $image = $this->getMedia('post'.'image')->last();
+       if($image){
+           $Url = $image->getUrl();
+       }else{
+           $Url = null;
+       }
+       return $Url;
+
     }
 }

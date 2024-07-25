@@ -25,20 +25,19 @@ class UserCreateRequest extends FormRequest
     {
         return [
             'name' => 'required|min:8',
-            'phone' => 'required|digits:11|unique:users,phone',
-            'password' => ['required', 'min:8', 'regex/[a-z]/', 'regex/[0-9]', 'regex/^[A-Za-z0-9/m]+$/']
+            'phone' =>'required|digits:11|unique:users,phone',
+            'password' => ['required','min:8','regex:/[a-z]/','regex:/[A-Z]/','regex:/[0-9]/','regex:/^[A-Za-z0-9]+$/']
         ];
     }
 
 
-    public function attributes(): array
-    {
-        return [
-            'name' => 'نام کاربری',
-            'phone' => 'شماره موبایل',
-            'password' => ' پسورد'
+public function attributes(): array
+{
+    return array(
+        'name'=>'نام کاربری',
+        'phone'=>'شماره موبایل',
+        'password'=>' پسورد'
 
-        ];
+    );
 
-    }
-}
+}}

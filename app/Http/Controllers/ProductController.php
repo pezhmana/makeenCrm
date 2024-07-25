@@ -21,6 +21,10 @@ class ProductController extends Controller
         if($request->image){
             $product->addMediaFromRequest('image')->toMediaCollection("product.image");
         }
+//        if($request->videoCollection){
+//            $product->addMediaFromRequest('video')->toMediaCollection("$product->name.video");
+//        }
+
 
         if($request->suggest){
             $id= Category::where('name','suggest')->first()->id;
@@ -52,23 +56,10 @@ class ProductController extends Controller
         }
 
 
-//        if ($product->video){
-//            $product->addMediaFromRequest('viedo')->toMediaCollection('video');
-//        }
-
-
-        if(Request('exp')){
-            $product = $product->orderByDesc('price')->get();
+        if(Request('count')) {
+            $product = Product::count();
             return response()->json($product);
         }
-
-        if(Request('asc')){
-            $product = $product->orderBy('price', 'asc')->get();
-
-        if(Request('count')){
-            $product = Product::count();
-
-            return response()->json($product);
 
         if(Request('member')){
             $order =new order();
@@ -95,6 +86,12 @@ class ProductController extends Controller
                $query->where('name', $id);
             });
         }
+        if(Request('orderRating')){
+            $product = $product->orderBy('ratings_avg_rating','desc');
+        }
+        if(Request('teacher')){
+            $product = $product->where('teacher_id',Request('teacher'));
+        }
         if(Request('rating')){
             $product = rating::sum('rating');
             $count = rating::count();
@@ -109,10 +106,7 @@ class ProductController extends Controller
 
         }
 
-          $product =$product->orderby('id', 'desc')->paginate(10);
 
-        return response()->json($product);
-        }}
 
 
     public function edit(Request $request, $id){

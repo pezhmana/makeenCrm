@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
     public function create(Request $request)
     {
 
-        $message = Message::create($request->toArray());
+        $message = Message::create($request->merge([
+            'user_id'=>Auth::user()->id
+        ])->toArray());
         return response()->json($message);
     }
 

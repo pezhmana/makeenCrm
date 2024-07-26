@@ -38,7 +38,7 @@ class UserController extends Controller
         return response()->json('اطلاعات کاربر با موفقیت ثبت شد');
     }
 
-    public function login(UserCreateRequest $request){
+    public function login(Request $request){
         $type = $request->type;
         if($type == 'signin'){
         $User =User::select(['id','phone', 'password'])

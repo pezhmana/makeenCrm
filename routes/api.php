@@ -134,13 +134,6 @@ Route::group(['prefix'=>'messages' , 'as'=>'messages' , 'middleware'=>'auth:sanc
 
 });
 
-Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){
-    Route::post('create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('create');
-    Route::get('index', [\App\Http\Controllers\TeacherController::class, 'index'])->name('index');
-    Route::put('edit/{id}', [\App\Http\Controllers\TeacherController::class, 'edit'])->name('edit');
-    Route::delete('delete/{id}', [\App\Http\Controllers\TeacherController::class, 'delete'])->name('delete');
-
-});
 
 
 route::group(['prefix'=>'label','as'=>'label','middleware'=>'auth:sanctum'],function(){

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateProductsRequest extends FormRequest
+class CreateTicketRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,22 +22,10 @@ class CreateProductsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|min:3',
-            'description'=>'required|nullable|min:3|max:255',
-            'price'=>'required|min:0|integer',
-           'discount_price'=>'required|min:0'
-
+            'ticket_name'=>'required|min:3|unique:tickets,ticket_name',
+            'priority'=>'required',
+            'description'=>'required|max:255',
+            'status'=>'required',
         ];
-    }
-    public function attributes(): array
-    {
-        return array(
-            'name'=>' name',
-            'description'=>'description ',
-            'price'=>'price',
-            'discount_price'=>' discount_price'
-
-        );
-
     }
 }

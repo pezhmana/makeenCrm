@@ -13,6 +13,7 @@ class Comment extends Model
         'user_id',
         'commentable_type',
         'commentable_id',
+        'comment_id'
     ];
 
     public function user(){
@@ -30,6 +31,10 @@ class Comment extends Model
     public function commentable()
     {
         return $this->morphTo();
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
     }
 }
 

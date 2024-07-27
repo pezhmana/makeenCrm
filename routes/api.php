@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Route;
         route::get('userindex',[UserController::class ,'adminIndex'])->name('index');
         route::get('orderindex',[UserController::class,'adminOrderIndex'])->name('orderIndex');
         route::post('reports',[UserController::class,'adminReports'])->name('reports');
+        route::post('answercomment',[CommentController::class ,'answer'])->name('answer');
     });
 
 

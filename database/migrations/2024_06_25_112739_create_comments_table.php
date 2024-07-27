@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('description');
             $table->unsignedBigInteger('user_id');
             $table->morphs('commentable');
+            $table->unsignedBigInteger('comment_id');
             $table->timestamps();
         });
     }

@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
         Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->name('me');
         Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-        Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
+        Route::put('selfedit', [UserController::class, 'selfedit'])->middleware('auth:sanctum')->name('selfedit');
         Route::post('profile', [UserController::class, 'profile'])->name('profile');
     });
 

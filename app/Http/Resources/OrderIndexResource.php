@@ -17,14 +17,14 @@ class OrderIndexResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $user = User::find($this->user_id)->first();
-        $product = Product::find($this->product_id)->first();
+        $user = User::find($this->user_id);
+        $product = Product::find($this->product_id);
         return [
             'id'=>$this->id,
             'date'=>$this->created_at,
             'user_name'=>$user->name.' '.$user->last_name,
             'product_name'=>$product->name,
-            'teacher_name'=>Teacher::where('id',$product->id)->first()->name,
+            'teacher_name'=>Teacher::where('id',$product->teacher_id)->first()->name,
             'price'=>$this->sum
         ];
     }

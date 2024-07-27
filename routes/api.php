@@ -47,6 +47,7 @@ use Illuminate\Support\Facades\Route;
         route::post('assign',[UserController::class ,'adminAssign'])->name('assign');
         route::get('userindex',[UserController::class ,'adminIndex'])->name('index');
         route::get('orderindex',[UserController::class,'adminOrderIndex'])->name('orderIndex');
+        route::post('reports',[UserController::class,'adminReports'])->name('reports');
     });
 
 

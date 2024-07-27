@@ -26,13 +26,14 @@ class PostController extends Controller
         $post = new Post();
         if($id){
             $post = post::where('id', $id)->first();
+            $post->increment('view');
             return Response()->json($post);
         }
         if(Request('search')){
             $search = Request('search');
             $post = Post::where('name','like','%'.$search.'%');
         }
-        $post = $post->orderByDesc('id')->paginate(10);
+        $post = $post->orderByDesc('id')->paginate(12);
         return response()->json($post);
     }
     public function edit(Request $request, $id){

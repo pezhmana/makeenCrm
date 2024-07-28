@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCommentRequest;
 use App\Models\Comment;
+use App\Models\Like;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
@@ -32,18 +35,39 @@ class CommentController extends Controller
     public function index( CreateCommentRequest $request){
         $type = $request->type;
         $comment = new Comment();
+        $comment = $comment ->withCount(['likes as like_count'=>function (Builder $query)
+        {
+            $query->where('which','like');
+        }])->withCount(['likes as dislike_count'=>function (Builder $query)
+        {
+            $query->where('which','dislike');
+        }]);
         $comment = $comment->with('comments');
         if($type == 'post'){
-            $comment = $comment->where('commentable_type','App\Models\Post');
+            $comment = $comment->where('commentable_type','App\Models\Post')
+                ->withCount(['likes as like_count'=>function (Builder $query)
+            {
+                $query->where('which','like');
+            }])->withCount(['likes as dislike_count'=>function (Builder $query)
+                {
+                    $query->where('which','dislike');
+                }]);
         }
         if($type == 'product'){
-            $comment = $comment->where('commentable_type','App\Models\Product');
+            $comment = $comment->where('commentable_type','App\Models\Product')
+                ->withCount(['likes as like_count'=>function (Builder $query)
+            {
+                $query->where('which','like');
+            }])->withCount(['likes as dislike_count'=>function (Builder $query)
+                {
+                    $query->where('which','dislike');
+                }]);
         }
         if($request->id){
             $comment = $comment->where('commentable_id',$request->id);
         }
         $comment = $comment->orderBy('id','DESC')->paginate(10);
-        return response()->json($comment);
+        return response()->json([$comment]);
     }
 
     public function delete($id){
@@ -60,5 +84,45 @@ class CommentController extends Controller
             'commentable_id'=>Comment::find($comment_id)->first()->commentable_id
         ])->toArray());
         return response()->json($comment);
+    }
+
+    public function like($id = null){
+        $user = Auth::user();
+        $comment =Comment::find($id);
+        $like = Like::where('comment_id',$comment->id)->where('user_id',$user->id);
+        if($like->exists()){
+            if($like->first()->which == 'dislike'){
+                $like->update([
+                    'which'=>'like'
+                ]);
+            }else{
+                $like->delete();
+            }
+        }else{
+            $user->likes()->create([
+               'which'=>'like',
+               'comment_id'=>$comment->id
+            ]);
+        }
+    }
+
+    public function dislike($id = null){
+        $user = Auth::user();
+        $comment =Comment::find($id);
+        $like = Like::where('comment_id',$comment->id)->where('user_id',$user->id);
+        if($like->exists()){
+            if($like->first()->which == 'like'){
+                $like->update([
+                    'which'=>'dislike'
+                ]);
+            }else{
+                $like->delete();
+            }
+        }else{
+            $user->likes()->create([
+                'which'=>'dislike',
+                'comment_id'=>$comment->id
+            ]);
+        }
     }
 }

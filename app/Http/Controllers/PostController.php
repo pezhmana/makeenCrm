@@ -7,6 +7,7 @@ use App\Models\Product;
 use http\Env\Response;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -15,7 +16,9 @@ class PostController extends Controller
     public function create(Request $request)
     {
 
-        $post = Post::create($request->toArray());
+        $post = Post::create($request->merge([
+            'user_id'=>Auth::user()->id
+        ])->toArray());
     if ($request->image) {
         $post->addMediaFromRequest('image')->toMediaCollection('post.image');
     }

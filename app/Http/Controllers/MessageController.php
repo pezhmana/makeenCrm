@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateMessageRequest;
 use App\Models\Message;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateMessageRequest $request)
     {
 
         $message = Message::create($request->merge([

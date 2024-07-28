@@ -28,4 +28,16 @@ class CreateTicketRequest extends FormRequest
             'status'=>'required',
         ];
     }
+    public function attributes(): array
+    {
+        return array(
+            'ticket_name'=>'name',
+            'priority'=>'priority',
+            'description'=>'description',
+            'status'=>' status',
+
+
+        );
+
+    }
 }

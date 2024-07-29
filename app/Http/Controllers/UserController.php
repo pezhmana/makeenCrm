@@ -88,6 +88,13 @@ class UserController extends Controller
     public function me(){
         $User = Auth::user();
 
+        if(Request('dashboard')){
+            $orders = $User->orders()->select(['id','created_at','sum'])->get();
+            $orders_count = $User->orders()->count();
+            $orders_count = "$orders_count : مجموع دوره های خریداری شده ";
+            return Response()->json([$orders,$orders_count]);
+        }
+
         if(Request('orders')){
             $User = $User->orders()->get();
         }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateDiscountRequest;
 use App\Models\Discount;
 use Illuminate\Http\Request;
 use Psy\Util\Str;
 
 class DiscountController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateDiscountRequest $request)
     {
         $random = bin2hex(random_bytes(3));
         $discount = Discount::create($request->merge([

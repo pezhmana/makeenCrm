@@ -94,6 +94,8 @@ route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanc
     Route::post('create', [CommentController::class, 'create'])->name('create');
     Route::post('index', [CommentController::class, 'index'])->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
+    route::post('like/{id}',[CommentController::class , 'like'])->name('like');
+    route::post('dislike/{id}',[CommentController::class , 'dislike'])->name('like');
 });
 
 Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){

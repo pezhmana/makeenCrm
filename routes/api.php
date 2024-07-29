@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
         Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->name('me');
         Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-        Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
+        Route::put('selfedit', [UserController::class, 'selfedit'])->middleware('auth:sanctum')->name('selfedit');
         Route::post('profile', [UserController::class, 'profile'])->name('profile');
     });
 
@@ -47,6 +47,8 @@ use Illuminate\Support\Facades\Route;
         route::post('assign',[UserController::class ,'adminAssign'])->name('assign');
         route::get('userindex',[UserController::class ,'adminIndex'])->name('index');
         route::get('orderindex',[UserController::class,'adminOrderIndex'])->name('orderIndex');
+        route::post('reports',[UserController::class,'adminReports'])->name('reports');
+        route::post('answercomment',[CommentController::class ,'answer'])->name('answer');
     });
 
 
@@ -92,6 +94,8 @@ route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanc
     Route::post('create', [CommentController::class, 'create'])->name('create');
     Route::post('index', [CommentController::class, 'index'])->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
+    route::post('like/{id}',[CommentController::class , 'like'])->name('like');
+    route::post('dislike/{id}',[CommentController::class , 'dislike'])->name('like');
 });
 
 Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){

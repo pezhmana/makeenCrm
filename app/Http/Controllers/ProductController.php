@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductsRequest;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\rating;
@@ -21,9 +22,13 @@ class ProductController extends Controller
         if($request->image){
             $product->addMediaFromRequest('image')->toMediaCollection("product.image");
         }
-//        if($request->videoCollection){
-//            $product->addMediaFromRequest('video')->toMediaCollection("$product->name.video");
-//        }
+        if($request->season){
+            foreach ($request->season as $season){
+                DB::table('collections')->insert([
+                    'collection'=>$product->name.$season
+                ]);
+            }
+        }
 
 
         if($request->suggest){
@@ -36,11 +41,21 @@ class ProductController extends Controller
 
     public function index($id = null) {
         $product = new product();
-        $product = $product->withAvg('ratings','rating')->with('categories');
+        $product = $product->withAvg('comments','rating')->with('categories');
         if($id){
-            $product =$product->where('id', $id)->first();
-            $product = $product->withAvg('ratings','rating')->with('categories')->get();
-            return response()->json($product);
+            $product = Product::find($id);
+            $user =Auth::user()->id;
+            $purchase = Order::where('user_id',$user)->where('product_id',$id);
+            if($purchase->exists()){
+                $media = Product::find($id)->getMedia('*');
+                $video = [];
+                foreach ($media as $mediaItem) {
+                    $video[] = $mediaItem->getUrl();
+                }
+            }else{
+                $video = 'برای دسترسی باید دوره را خریداری نمایید';
+            }
+            return response()->json([$product,$video]);
         }
         if(request("most")){
             $topProductIds = Order::select('product_id', DB::raw('COUNT(*) as total'))
@@ -93,8 +108,8 @@ class ProductController extends Controller
             $product = $product->where('teacher_id',Request('teacher'));
         }
         if(Request('rating')){
-            $product = rating::sum('rating');
-            $count = rating::count();
+            $product = Comment::sum('rating');
+            $count = Comment::count('rating');
             $product = $product*20;
             $product = $product/$count.'%';
             return response()->json($product);
@@ -120,7 +135,8 @@ class ProductController extends Controller
 
     public function addmedia($id , Request $request){
         $product = Product::find($id);
-        $video =$product->addMediaFromRequest('media')->toMediaCollection("$product->name.season$request->season");
+        $collection = DB::table('collections')->find($request->season);
+        $video =$product->addMediaFromRequest('media')->toMediaCollection($collection->collection);
         return response()->json($video);
     }
 

@@ -43,7 +43,7 @@ class Product extends Model implements HasMedia
     }
 
     public function comments(){
-        return $this->morphMany(comment::class,'commentable');
+        return $this->hasMany(comment::class);
     }
 
     public function orders(){

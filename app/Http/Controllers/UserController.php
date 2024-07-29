@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\OrderIndexResource;
 use App\Http\Resources\OrderResourceCollection;
+use App\Http\Resources\ProductResourceCollection;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResourceCollection;
 use App\Mail\restorePasswordMail;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\Ticket;
 use App\Models\User;
 use http\Env\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -31,10 +34,6 @@ class UserController extends Controller
             $request->merge(['password' => Hash::make($request->password)])
                 ->toArray());
         $User->assignRole('user');
-
-        if ($request->image) {
-            $User->addMediaFromRequest('image')->toMediaCollection('avatar');
-        }
         return response()->json('اطلاعات کاربر با موفقیت ثبت شد');
     }
 
@@ -88,8 +87,14 @@ class UserController extends Controller
 
     public function me(){
         $User = Auth::user();
-        $media = $User->getMedia('avatar');
-        $url = $media[0]->getUrl();
+
+        if(Request('dashboard')){
+            $orders = $User->orders()->select(['id','created_at','sum'])->get();
+            $orders_count = $User->orders()->count();
+            $orders_count = "$orders_count : مجموع دوره های خریداری شده ";
+            return Response()->json([$orders,$orders_count]);
+        }
+
         if(Request('orders')){
             $User = $User->orders()->get();
         }
@@ -99,7 +104,27 @@ class UserController extends Controller
         if(Request('like')){
             $User = $User->labelProducts();
         }
-        return response()->json([$User, $url]);
+        if(Request('ticket')){
+            $user = Auth::user();
+            $ticket = new Ticket();
+            $ticket = $user->tickets()->get();
+            $countOpen = $user->tickets()->where('status','open')->count();
+            $countRun = $user->tickets()->where('status','running')->count();
+            $countClose = $user->tickets()->where('status','closed')->count();
+            $countAnswer = $user->tickets()->where('status','answered')->count();
+            $counts = [
+                'open' => $countOpen,
+                'running' => $countRun,
+                'closed' => $countClose,
+                'answered' => $countAnswer,
+            ];
+
+            return response()->json([
+                'tickets' => $ticket,
+                'counts' => $counts,
+            ]);
+        }
+        return response()->json([$User]);
     }
 
     public function delete(UserCreateRequest $request, $id = Null){
@@ -155,13 +180,40 @@ class UserController extends Controller
         return response()->json($media);
     }
 
-    public function dashboard(){
-        if(Request('students')){
-            $role =Role::findByName('student' , 'web')->count();
+    public function adminDashboard(){
+
+            $role = User::withCount('roles')
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'student');
+                })
+                ->count();
+            $role = "تعداد دانش اموزان $role";
+
+            $sales = Order::all()
+                ->groupBy(function ($date) {
+                    return $date->created_at->format('Y-m-d');
+                })
+                ->map(function ($item) {
+                    return [
+                        "date" => $item->first()->created_at,
+                        "total" => $item->sum('sum'),
+                    ];
+                });
+
+            $response = [];
+            foreach ($sales as $date => $sale) {
+                $response[] = [
+                    'date' => $sale['date']->format('Y-m-d'),
+                    'total' => $sale['total'],
+                ];
+            }
+
+
+
+            return response()->json([$response,$role]);
         }
 
-        return response()->json($role);
-    }
+
 
     public function adminLogin(UserCreateRequest $request)
     {
@@ -192,5 +244,10 @@ class UserController extends Controller
     public function adminOrderIndex(){
         $order = new OrderResourceCollection(Order::all());
         return response()->json($order);
+    }
+
+    public function adminReports(Request $request){
+        $report = new ProductResourceCollection(Product::all());
+        return response()->json($report);
     }
 }

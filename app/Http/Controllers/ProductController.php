@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductsRequest;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\rating;
@@ -40,7 +41,7 @@ class ProductController extends Controller
 
     public function index($id = null) {
         $product = new product();
-        $product = $product->withAvg('ratings','rating')->with('categories');
+        $product = $product->withAvg('comments','rating')->with('categories');
         if($id){
             $product = Product::find($id);
             $user =Auth::user()->id;
@@ -107,8 +108,8 @@ class ProductController extends Controller
             $product = $product->where('teacher_id',Request('teacher'));
         }
         if(Request('rating')){
-            $product = rating::sum('rating');
-            $count = rating::count();
+            $product = Comment::sum('rating');
+            $count = Comment::count('rating');
             $product = $product*20;
             $product = $product/$count.'%';
             return response()->json($product);

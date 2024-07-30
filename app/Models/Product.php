@@ -15,8 +15,6 @@ class Product extends Model implements HasMedia
         'description',
         'teacher_id',
         'price',
-        'type',
-        'status',
         'discount_price',
         'category_id',
     ];
@@ -45,7 +43,7 @@ class Product extends Model implements HasMedia
     }
 
     public function comments(){
-        return $this->morphMany(comment::class,'commentable');
+        return $this->hasMany(comment::class);
     }
 
     public function orders(){
@@ -56,17 +54,11 @@ class Product extends Model implements HasMedia
         return $this->hasOne(teacher::class);
     }
 
-
-
-
-
     public function categories()
     {
         return $this->morphToMany(Category::class, 'categoryable');
 
     }
-
-
 
 
 

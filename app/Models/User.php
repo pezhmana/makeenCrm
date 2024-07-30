@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\MediaLibrary\HasMedia;
@@ -23,12 +24,12 @@ class User extends Authenticatable implements HasMedia
      */
     protected $fillable = [
         'name',
-//        'email',
+        'email',
         'password',
         'new_password',
         'phone',
-//        'national_code',
-//        'birth_date',
+        'gender',
+        'birth_date',
         'last_name',
         'code'
 
@@ -109,4 +110,27 @@ class User extends Authenticatable implements HasMedia
     protected $appends=[
         'full_name'
     ];
+
+    public function labelProducts(): array
+    {
+        $data = [];
+        $user = auth()->user();
+        $label = Label::where('name','favorite')->first()->id;
+        $favoriteLabels = DB::table('labelables')
+            ->where('user_id',$user->id)
+            ->where('label_id',$label)->get()->toArray();
+        foreach ($favoriteLabels as $favoriteLabel) {
+            $product = Product::find($favoriteLabel->labelables_id);
+            if ($product) {
+                $data[] = $product;
+            }
+        }
+
+        return $data;
+    }
+
+    public function likes(){
+        return $this->hasMany(Like::class);
+    }
+
 }

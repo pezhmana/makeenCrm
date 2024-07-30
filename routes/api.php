@@ -37,16 +37,24 @@ use Illuminate\Support\Facades\Route;
         Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
         Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum')->name('me');
         Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-        Route::put('selfedit', [UserController::class, 'selfedit'])->name('selfedit');
+        Route::put('selfedit', [UserController::class, 'selfedit'])->middleware('auth:sanctum')->name('selfedit');
         Route::post('profile', [UserController::class, 'profile'])->name('profile');
     });
 
     route::group(['prefix'=>'admin' , 'middleware'=>'auth:sanctum'], function () {
         route::post('dashboard',[UserController::class , 'adminDashboard'])->middleware('admin.dashboard')->name('dashboard');
         route::post('login',[UserController::class ,'adminLogin'])->withoutMiddleware('auth:sanctum')->name('login');
+<<<<<<< HEAD
         route::post('assign',[UserController::class ,'adminAssign'])->middleware('admin.assign')->name('assign');
         route::get('userindex',[UserController::class ,'adminIndex'])->middleware('admin.userindex')->name('index');
         route::get('orderindex',[UserController::class,'adminOrderIndex'])->middleware('admin.orderindex')->name('orderIndex');
+=======
+        route::post('assign',[UserController::class ,'adminAssign'])->name('assign');
+        route::get('userindex',[UserController::class ,'adminIndex'])->name('index');
+        route::get('orderindex',[UserController::class,'adminOrderIndex'])->name('orderIndex');
+        route::post('reports',[UserController::class,'adminReports'])->name('reports');
+        route::post('answercomment',[CommentController::class ,'answer'])->name('answer');
+>>>>>>> 17f1e9a20520097509839ad5237dee8ad0e18ec1
     });
 
 
@@ -90,9 +98,17 @@ Route::group(['prefix'=>'orders' , 'as'=>'orders' , 'middleware'=>'auth:sanctum'
 });
 
 route::group(['prefix'=>'comments' , 'as'=>'comments' , 'middleware'=>'auth:sanctum'],function(){
+<<<<<<< HEAD
     Route::post('create', [CommentController::class, 'create'])->middleware('comments.create')->name('create');
     Route::post('index', [CommentController::class, 'index'])->middleware('comments.index')->name('index');
     route::delete('delete/{id}', [CommentController::class, 'delete'])->middleware('comments.delete')->name('delete');
+=======
+    Route::post('create', [CommentController::class, 'create'])->name('create');
+    Route::post('index', [CommentController::class, 'index'])->name('index');
+    route::delete('delete/{id}', [CommentController::class, 'delete'])->name('delete');
+    route::post('like/{id}',[CommentController::class , 'like'])->name('like');
+    route::post('dislike/{id}',[CommentController::class , 'dislike'])->name('like');
+>>>>>>> 17f1e9a20520097509839ad5237dee8ad0e18ec1
 });
 
 Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanctum'],function(){
@@ -116,10 +132,18 @@ route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sa
 });
 
 Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctum'],function(){
+<<<<<<< HEAD
     Route::post('create', [\App\Http\Controllers\TicketController::class, 'create'])->middleware('tickets.create')->name('create');
     Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->middleware('tickets.index')->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\TicketController::class, 'edit'])->middleware('tickets.edit')->name('edit');
     Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->middleware('tickets.delete')->name('delete');
+=======
+    Route::post('create', [\App\Http\Controllers\TicketController::class, 'create'])->name('create');
+    Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->name('index');
+    Route::put('edit/{id}', [\App\Http\Controllers\TicketController::class, 'edit'])->name('edit');
+    Route::get('userticket', [\App\Http\Controllers\TicketController::class, 'userTicket'])->name('index');
+    Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->name('delete');
+>>>>>>> 17f1e9a20520097509839ad5237dee8ad0e18ec1
 
 
 });

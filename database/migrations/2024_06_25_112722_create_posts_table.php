@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('short');
             $table->string('description');
             $table->string('time');
+            $table->bigInteger('view')->default(0);
             $table->timestamps();
         });
     }

@@ -24,7 +24,7 @@ class TeacherController extends Controller
         if ($id) {
             $teacher = Teacher::where('id', $id)->first();
         } else {
-            $teacher = Teacher::orderby('id', 'desc')->paginate(10);
+            $teacher = Teacher::orderby('id', 'desc')->paginate(12);
         }
         return response()->json($teacher);
     }

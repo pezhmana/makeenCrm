@@ -23,7 +23,7 @@ class permissionSeeder extends Seeder
     // auth
         $login_auth = Permission::create(['name'=>'auth.login']);
         $logout_auth = Permission::create(['name'=>'auth.logout']);
-        $me_auth = Permission::create(['name'=>'auth.logout']);
+        $me_auth = Permission::create(['name'=>'auth.me']);
         $create_auth = Permission::create(['name'=>'auth.create']);
         $selfedit_auth = Permission::create(['name'=>'auth.selfedit']);
         $profile_auth = Permission::create(['name'=>'auth.profile']);

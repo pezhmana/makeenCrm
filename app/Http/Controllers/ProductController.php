@@ -15,11 +15,9 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-<<<<<<< HEAD
-        public function create(Request $request)
-=======
+
     public function create(CreateProductsRequest $request)
->>>>>>> 462e8c0312a2486545a3c895786fcaab406abfb2
+
     {
 
         $product = product::create($request->toArray());
@@ -73,20 +71,13 @@ class ProductController extends Controller
         if(Request('search')){
             $product = Product::where('name','like','%'.Request('search').'%');
         }
-<<<<<<< HEAD
+
         if(Request('count')){
             $product = Product::count();
             return response()->json($product);
         }
-=======
 
 
-        if(Request('count')) {
-            $product = Product::count();
-            return response()->json($product);
-        }
-
->>>>>>> 17f1e9a20520097509839ad5237dee8ad0e18ec1
         if(Request('member')){
             $order =new order();
             $product = $product->withCount('orders');
@@ -109,11 +100,11 @@ class ProductController extends Controller
         if(Request('category')){
             $id =Request('category');
             $product = Product::whereHas('categories',function (Builder $query)use($id){
-<<<<<<< HEAD
+
                 $query->where('category_id', $id);
-=======
+
                $query->where('name', $id);
->>>>>>> 17f1e9a20520097509839ad5237dee8ad0e18ec1
+
             });
         }
         if(Request('orderRating')){
@@ -135,16 +126,12 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-<<<<<<< HEAD
-        public function edit(Request $request, $id){
-=======
-        }
+
 
 
 
 
     public function edit(Request $request, $id){
->>>>>>> 17f1e9a20520097509839ad5237dee8ad0e18ec1
         $product = product::where('id', $id)->update($request->toArray());
         return response()->json($product);
     }

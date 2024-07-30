@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePostsRequest;
 use App\Models\Post;
 use App\Models\Product;
 use http\Env\Response;
@@ -13,7 +14,7 @@ class PostController extends Controller
 {
 
 
-    public function create(Request $request)
+    public function create(CreatePostsRequest $request)
     {
 
 <<<<<<< HEAD

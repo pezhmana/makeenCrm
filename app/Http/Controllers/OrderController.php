@@ -25,7 +25,7 @@ class OrderController extends Controller
             return response()->json($orders);
         }
     }
-    public function create(Request $request){
+    public function create(CreateOrdersRequest $request){
         $user = Auth::user();
         $product = Product::where('id',$request->product_id)->first();
         $exist = Order::where('user_id',$user->id)->where('product_id',$request->product_id);

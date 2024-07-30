@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTeacherRequest;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateTeacherRequest $request)
     {
 
         $teacher = Teacher::create($request->toArray());

@@ -11,7 +11,7 @@ class CreatePostsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,19 @@ class CreatePostsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'=>'required|min:3',
+            'short'=>'required',
+            'description'=>'required|max:255',
+            'time'=>'required|integer'
         ];
+    }
+    public function attributes():array
+    {
+        return array(
+        'name'=>'name',
+            'short'=>'short',
+            'description'=>'description',
+            'time'=>'time'
+);
     }
 }

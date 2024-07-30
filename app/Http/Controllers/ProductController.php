@@ -15,7 +15,11 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+<<<<<<< HEAD
         public function create(Request $request)
+=======
+    public function create(CreateProductsRequest $request)
+>>>>>>> 462e8c0312a2486545a3c895786fcaab406abfb2
     {
 
         $product = product::create($request->toArray());

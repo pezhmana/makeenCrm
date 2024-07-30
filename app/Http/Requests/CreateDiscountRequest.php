@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateOrdersRequest extends FormRequest
+class CreateDiscountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,16 +22,12 @@ class CreateOrdersRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sum'=>'required|integer'
+         'name'=>'required',
+         'amount'=>'required|numeric',
+
+         'percent'=>'required',
+         'from'=>'required',
+         'to'=>'required',
         ];
-    }
-    public function attributes(): array
-    {
-        return array(
-            'sum'=>'sum',
-
-
-        );
-
     }
 }

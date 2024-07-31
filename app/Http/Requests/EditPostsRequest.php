@@ -11,7 +11,7 @@ class EditPostsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class EditPostsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'short' => 'required',
+            'description' => 'required|max:255',
+            'time' => 'required|integer'
         ];
     }
 }

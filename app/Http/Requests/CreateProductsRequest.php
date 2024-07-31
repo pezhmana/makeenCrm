@@ -22,7 +22,7 @@ class CreateProductsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|min:3',
+            'name'=>'required|min:1',
             'description'=>'required|nullable|min:3|max:255',
             'price'=>'required|min:0|integer',
            'discount_price'=>'required|min:0'

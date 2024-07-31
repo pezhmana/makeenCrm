@@ -22,19 +22,11 @@ class CreatePostsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|min:3',
+            'name'=>'required|min:1',
             'short'=>'required',
             'description'=>'required|max:255',
             'time'=>'required|integer'
         ];
     }
-    public function attributes():array
-    {
-        return array(
-        'name'=>'name',
-            'short'=>'short',
-            'description'=>'description',
-            'time'=>'time'
-);
-    }
+
 }

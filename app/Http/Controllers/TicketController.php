@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTicketRequest;
+use App\Http\Requests\EditTicketRequest;
 use App\Models\Teacher;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class TicketController extends Controller
         return response()->json($ticket);
     }
 
-    public function edit(Request $request, $id)
+    public function edit(EditTicketRequest $request, $id)
     {
         $ticket = Ticket::where('id', $id)->update($request->toArray());
         return response()->json($ticket);

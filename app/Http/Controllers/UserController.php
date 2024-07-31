@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\OrderIndexResource;
 use App\Http\Resources\OrderResourceCollection;
@@ -159,7 +160,7 @@ class UserController extends Controller
 
     }
 
-    public function edit(Request $request , $id){
+    public function edit(EditUserRequest $request , $id){
         $User = User::find($id);
         $User->update($request->all());
         return response()->json($User);

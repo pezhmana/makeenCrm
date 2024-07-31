@@ -11,7 +11,7 @@ class EditProductsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,14 @@ class EditProductsRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+
+                return [
+                    'name'=>'required|min:3',
+                    'description'=>'required|nullable|min:3|max:255',
+                    'price'=>'required|min:0|integer',
+                    'discount_price'=>'required|min:0'
+
+                ];
+
     }
 }

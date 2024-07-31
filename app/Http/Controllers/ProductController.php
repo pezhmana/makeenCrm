@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductsRequest;
+use App\Http\Requests\EditProductsRequest;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Order;
@@ -124,7 +125,7 @@ class ProductController extends Controller
 
 
 
-    public function edit(Request $request, $id){
+    public function edit(EditProductsRequest $request, $id){
         $product = product::where('id', $id)->update($request->toArray());
         return response()->json($product);
     }

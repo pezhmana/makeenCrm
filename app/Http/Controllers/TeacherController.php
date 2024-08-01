@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTeacherRequest;
+use App\Http\Requests\EditTeacherRequest;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 
@@ -30,7 +31,7 @@ class TeacherController extends Controller
         return response()->json($teacher);
     }
 
-    public function edit(Request $request, $id)
+    public function edit(EditTeacherRequest $request, $id)
     {
         $teacher = Teacher::where('id', $id)->update($request->toArray());
         return response()->json($teacher);

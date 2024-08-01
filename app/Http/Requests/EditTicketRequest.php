@@ -23,10 +23,10 @@ class EditTicketRequest extends FormRequest
     {
 
                    return [
-                       'ticket_name'=>'required|min:1|unique:tickets,ticket_name',
-                       'priority'=>'required',
-                       'description'=>'required|max:255',
-                       'status'=>'required',
+                       'ticket_name'=>'min:1|unique:tickets,ticket_name',
+
+                       'description'=>'max:255',
+
                    ];
 
     }

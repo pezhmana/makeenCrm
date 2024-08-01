@@ -22,11 +22,11 @@ class EditUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:1',
-            'last_name'=>'required|min:1',
-            'phone' =>'required|digits:11|unique:users,phone',
-           'birth_date'=>'required',
-           'email'=>'required|unique:users,email'
+            'name' => 'min:1',
+            'last_name'=>'min:1',
+            'phone' =>'digits:11|unique:users,phone',
+
+           'email'=>'unique:users,email'
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateMessageRequest;
+use App\Http\Requests\EditMessageRequest;
 use App\Models\Message;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class MessageController extends Controller
         return response()->json($message);
     }
 
-    public function edit(Request $request, $id)
+    public function edit(EditMessageRequest $request, $id)
     {
         $message = Message::where('id', $id)->update($request->toArray());
         return response()->json($message);

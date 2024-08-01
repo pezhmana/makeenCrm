@@ -22,7 +22,7 @@ class EditOrdersRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sum'=>'sum',
+            'sum'=>'integer',
         ];
     }
 }

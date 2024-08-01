@@ -22,10 +22,8 @@ class EditPostsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'short' => 'required',
-            'description' => 'required|max:255',
-            'time' => 'required|integer'
+            'description' => 'max:255',
+            'time' => 'integer'
         ];
     }
 }

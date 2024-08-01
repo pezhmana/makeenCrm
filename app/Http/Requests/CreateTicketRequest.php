@@ -31,7 +31,7 @@ class CreateTicketRequest extends FormRequest
     public function attributes(): array
     {
         return array(
-            'ticket_name'=>'name',
+
             'priority'=>'priority',
             'description'=>'description',
             'status'=>' status',

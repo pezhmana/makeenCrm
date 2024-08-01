@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateLabelRequest;
+use App\Http\Requests\EditlabelRequest;
 use App\Models\Label;
 use App\Models\Message;
 use App\Models\Product;
@@ -33,7 +34,7 @@ class LabelController extends Controller
         return Response()->json($label);
     }
 
-    public function edit($id = null , Request $request){
+    public function edit($id = null , EditlabelRequest $request){
         $Label = Label::where('id', $id)->update($request->toArray());
         return response()->json($Label);
     }

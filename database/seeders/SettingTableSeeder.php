@@ -29,5 +29,9 @@ class SettingTableSeeder extends Seeder
         DB::table('categories')->insert([
             ['name'=>'suggest']
         ]);
+
+        DB::table('labels')->insert([
+            'name'=>'favorite'
+        ]);
     }
 }

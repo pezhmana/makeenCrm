@@ -51,5 +51,14 @@ class Category extends Model implements HasMedia
         return $this->morphedByMany(Category::class , 'categoryable');
     }
 
+    public function ProductOrder(): array
+    {
+        $data = [];
+        $products = $this->products()->get();
+        foreach ($products as $product) {
+            $data[] = $product->orders->count();
+        }
+        return $data;
+    }
 
 }

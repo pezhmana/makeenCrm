@@ -34,11 +34,11 @@ use Illuminate\Support\Facades\Route;
 
     route::group(['prefix' => 'auth'], function () {
         Route::post('sign', [UserController::class, 'sign'])->name('login');
-        Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctum|permission:auth.index')->name('logout');
-        route::get('dashboard', [UserController::class, 'dashboard'])->middleware('auth:sanctum|permission:auth.dashboard')->name('dashboard');
-        Route::get('me', [UserController::class, 'me'])->middleware('auth:sanctum|permission:auth.me')->name('me');
+        Route::get('logout', [UserController::class, 'logout'])->middleware(['auth:sanctum','permission:auth.index'])->name('logout');
+        route::get('dashboard', [UserController::class, 'dashboard'])->middleware(['auth:sanctum','permission:auth.dashboard'])->name('dashboard');
+        Route::get('me', [UserController::class, 'me'])->middleware(['permission:auth.me','auth:sanctum'])->name('me');
 //        Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
-        Route::put('selfedit', [UserController::class, 'selfedit'])->middleware('auth:sanctum|permission:auth.selfedit')->name('selfedit');
+        Route::put('selfedit', [UserController::class, 'selfedit'])->middleware(['auth:sanctum','permission:auth.selfedit'])->name('selfedit');
 //        Route::post('profile', [UserController::class, 'profile'])->name('profile');
     });
 
@@ -62,13 +62,13 @@ Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],f
 
 Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
    Route::get('index/{key?}', [SettingController::class, 'index'])->name('index');
-   Route::put('edit/{key}', [SettingController::class, 'edit'])->middleware('auth:sanctum|permission:setting.edit')->name('edit');
+   Route::put('edit/{key}', [SettingController::class, 'edit'])->middleware(['auth:sanctum','permission:setting.edit'])->name('edit');
 //   Route::post('create', [SettingController::class, 'create'])->name('create');
 //   Route::delete('delete{id}', [SettingController::class, 'delete'])->name('delete');
 });
 Route::group(['prefix'=>'products' , 'as'=>'products' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\ProductController::class, 'create'])->middleware('permission:products.create')->name('create');
-    Route::get('index/{id?}', [\App\Http\Controllers\ProductController::class, 'index'])->withoutMiddleware('auth:sanctum')->name('index');
+    Route::get('index/{id?}', [\App\Http\Controllers\ProductController::class, 'index'])->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\ProductController::class, 'edit'])->middleware('permission:products.edit')->name('edit');
     Route::Post('addmedia/{id}',[ProductController::class , 'addmedia'])->middleware('permission:products.addmedia')->name('addmedia');
     Route::delete('delete/{id}', [\App\Http\Controllers\ProductController::class, 'delete'])->middleware('permission:products.delete')->name('delete');
@@ -167,4 +167,5 @@ route::group(['prefix'=>'discount','as'=>'discount','middleware'=>'auth:sanctum'
     route::get('index',[\App\Http\Controllers\DiscountController::class,'index'])->middleware('permission:discount.index')->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\DiscountController::class, 'edit'])->middleware('permission:discount.edit')->name('edit');
     Route::delete('delete/{id}', [\App\Http\Controllers\DiscountController::class, 'delete'])->middleware('permission:discount.delete')->name('delete');
+
 });

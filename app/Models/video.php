@@ -20,4 +20,9 @@ class video extends Model implements HasMedia
     public function chapter(){
         return $this->belongsTo(Chapter::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
 }

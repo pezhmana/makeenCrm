@@ -40,12 +40,17 @@ class TicketController extends Controller
         return response()->json($ticket);
     }
 
-    public function delete($id)
+//    public function delete($id)
+//    {
+//        $ticket = Ticket::where('id', $id)->delete();
+//        return response()->json($ticket);
+//    }
+
+    public function destroy($id)
     {
-        $ticket = Ticket::where('id', $id)->delete();
+        $ticket =Ticket::where('id', $id)->delete();
         return response()->json($ticket);
     }
-
     public function userTicket()
     {
         $user = Auth::user();

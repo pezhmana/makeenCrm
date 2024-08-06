@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCategoriesRequest extends FormRequest
+class EditCategorysRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class CreateCategoriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|unique:category,name'
+//            'name'=>'unique:categorie,name'
         ];
     }
 }

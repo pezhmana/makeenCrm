@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],function(){
     Route::get('index/{id?}', [UserController::class, 'index'])->name('index');
     Route::put('edit/{id}', [UserController::class, 'edit'])->name('edit');
-    Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+    Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
     Route::post('editpassword', [UserController::class, 'editPassword'])->name('editPassword');
 });
 
@@ -102,7 +102,7 @@ Route::group(['prefix'=>'teachers' , 'as'=>'teachers' , 'middleware'=>'auth:sanc
     Route::post('create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('create');
     Route::get('index/{id?}', [\App\Http\Controllers\TeacherController::class, 'index'])->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\TeacherController::class, 'edit'])->name('edit');
-    Route::delete('delete/{id}', [\App\Http\Controllers\TeacherController::class, 'delete'])->name('delete');
+    Route::delete('destroy/{id}', [\App\Http\Controllers\TeacherController::class, 'destroy'])->name('destroy');
 
 });
 
@@ -123,7 +123,7 @@ Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctu
     Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\TicketController::class, 'edit'])->name('edit');
     Route::get('userticket', [\App\Http\Controllers\TicketController::class, 'userTicket'])->name('index');
-    Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->name('delete');
+    Route::delete('destroy/{id}', [\App\Http\Controllers\TicketController::class, 'destroy'])->name('destroy');
 
 
 });

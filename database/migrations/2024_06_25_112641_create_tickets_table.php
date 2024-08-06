@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->text('description');
             $table->enum('status',['open','running','answered','closed'])->default('open');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -28,5 +29,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('tickets');
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->dropColumn('deleted_at');
+        });
     }
 };

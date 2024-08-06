@@ -34,7 +34,7 @@ class UserController extends Controller
         $User = User::create(
             $request->merge(['password' => Hash::make($request->password)])
                 ->toArray());
-        $User->assignRole('user');
+//        $User->assignRole('user');
         return response()->json('اطلاعات کاربر با موفقیت ثبت شد');
     }
 
@@ -128,10 +128,10 @@ class UserController extends Controller
         return response()->json([$User]);
     }
 
-    public function delete(UserCreateRequest $request, $id = Null){
-            User::destroy($id);
-        return response()->json('کاربر با موفقیت حذف شد');
-    }
+//    public function delete(UserCreateRequest $request, $id = Null){
+//            User::destroy($id);
+//        return response()->json('کاربر با موفقیت حذف شد');
+//    }
 
 
     public function index(UserCreateRequest $request , $id = Null){
@@ -250,5 +250,10 @@ class UserController extends Controller
     public function adminReports(Request $request){
         $report = new ProductResourceCollection(Product::all());
         return response()->json($report);
+    }
+    public function destroy($id)
+    {
+        $users =User::where('id', $id)->delete();
+        return response()->json('کاربر با موفقیت حذف شد');
     }
 }

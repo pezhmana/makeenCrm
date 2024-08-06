@@ -6,6 +6,7 @@ use App\Http\Requests\CreateTeacherRequest;
 use App\Http\Requests\EditTeacherRequest;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Return_;
 
 class TeacherController extends Controller
 {
@@ -37,9 +38,14 @@ class TeacherController extends Controller
         return response()->json($teacher);
     }
 
-    public function delete($id)
+//    public function delete($id)
+//    {
+//        $teacher = Teacher::where('id', $id)->delete();
+//        return response()->json($teacher);
+//    }
+    public function destroy($id)
     {
-        $teacher = Teacher::where('id', $id)->delete();
+        $teacher =teacher::where('id', $id)->delete();
         return response()->json($teacher);
     }
 }

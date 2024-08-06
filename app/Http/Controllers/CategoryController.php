@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCategoriesRequest;
+use App\Http\Requests\EditCategorysRequest;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Product;
@@ -64,7 +65,7 @@ class CategoryController extends Controller
         return response()->json('با موفقیا حذف شد');
     }
 
-    public function edit($id , CreateCategoriesRequest $request){
+    public function edit($id , EditCategorysRequest $request){
         $category = Category::find( $id);
         $category->update($request->toArray());
         return response()->json($category);

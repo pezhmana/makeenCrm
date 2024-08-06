@@ -256,4 +256,9 @@ class UserController extends Controller
         $users =User::where('id', $id)->delete();
         return response()->json('کاربر با موفقیت حذف شد');
     }
+    public function restore($id)
+    {
+        User::withTrashed()->where('id',$id)->restore();
+        return response()->json('restored');
+    }
 }

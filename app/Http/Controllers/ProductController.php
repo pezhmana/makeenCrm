@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UsersExport;
 use App\Http\Requests\CreateProductsRequest;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -9,10 +10,13 @@ use App\Models\Comment;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\rating;
+use http\Url;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Excel;
 use Spatie\MediaLibrary\Conversions\ImageGenerators\Video;
 
 class ProductController extends Controller
@@ -49,17 +53,24 @@ class ProductController extends Controller
             $user =Auth::user()->id;
             $purchase = Order::where('user_id',$user)->where('product_id',$id);
             if($purchase->exists()){
-                $video = Product::find($id)->chapters()->with('videos')->get();
-//                dd($media);
-//                $video = [];
-//                foreach ($media as
-// $mediaItem) {
-//                    $video[] = $mediaItem->url;
-//                }
+                $chapter = Product::find($id)->chapters()->first();
+                if(Request('video')){
+                    $id=Request('video');
+                    $url =$chapter->videos->find($id);
+                    if($url == null){
+                        return response()->json('همچین ویدیو ای برای دوره وجود ندارد');
+                    }
+                    $user_video = DB::table('user_video')->where('user_id',$user)->where('video_id',$url->id);
+                    if(!$user_video->exists()){
+                        Auth::user()->videos()->attach($url->id,['product_id'=>$product->id]);
+                    }
+                    $url = $url->url;
+                    return response()->json($url);
+                }
             }else{
                 $video = 'برای دسترسی باید دوره را خریداری نمایید';
             }
-            return response()->json([$product,$video]);
+            return response()->json([$product,$chapter]);
         }
         if(request("most")){
             $topProductIds = Order::select('product_id', DB::raw('COUNT(*) as total'))
@@ -137,26 +148,35 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function addmedia(Request $request,$id){
-        $exist = Chapter::where('title',$request->chapter);
-        if($exist->exists()){
-            $season = $exist->first();
-        }else{
+    public function addmedia(Request $request, $id)
+    {
+        $exist = Chapter::where('title', $request->chapter)->where('product_id', $id)->first();
+
+        if ($exist) {
+            $video = $exist->videos()->create([
+                'title' => $request->title,
+            ]);
+        } else {
             $season = Product::find($id)->chapters()->create([
-                'title'=>$request->chapter
+                'title' => $request->chapter,
+            ]);
+
+            $video = $season->videos()->create([
+                'title' => $request->title,
             ]);
         }
-        $video = $season->videos()->create([
-            'title' => $request->title,
+
+        $media = $video->addMediaFromRequest('media')->toMediaCollection('product.videos');
+        $url = $media->getUrl();
+        $video->update([
+            'url' => $url,
         ]);
-        $media= $video->addMediaFromRequest('media')->toMediaCollection('product.videos');
-    $url = $media->getUrl();
-    $video->update([
-        'url'=>$url
-    ]);
-//    $response = $season->with('videos');
+
         return response()->json($video);
     }
+
+
+
 
 
 }

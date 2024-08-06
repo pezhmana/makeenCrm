@@ -23,4 +23,21 @@ class Chapter extends Model
     public function videos(){
         return $this->hasMany(video::class);
     }
+
+    public function getVideoAttribute(){
+        $videos=[];
+       $video =$this->videos()->get();
+       foreach ($video as $v){
+           $videos[]=[
+               'id'=>$v->id,
+             'title'=>$v->title
+           ];
+       }
+       return $videos;
+
+    }
+
+    protected $appends=[
+        'video'
+    ];
 }

@@ -12,8 +12,10 @@ use App\Mail\restorePasswordMail;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Teacher;
 use App\Models\Ticket;
 use App\Models\User;
+use Faker\Core\File;
 use http\Env\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -22,9 +24,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Excel;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\table;
 
 
@@ -38,7 +42,6 @@ class UserController extends Controller
             $exist = User::where('phone',$phone)->first();
         if($type == 'signin'){
             $user =User::select(['id','phone', 'password'])->where('phone', $request->phone)->first();
-//            dd($user);
             if(!$user){
                 return response()->json('کاربر پیدا نشد');
             }
@@ -56,6 +59,7 @@ class UserController extends Controller
                     'code' => $number,
                     'phone' => $user->phone
                 ]);
+                $user->assignRole('user');
                 return response()->json('کد تاییده با موفقیت ارسال شد');
         }
         if($type == 'received') {
@@ -106,6 +110,7 @@ class UserController extends Controller
 
     public function me(){
         $User = Auth::user();
+        $User->makeHidden(['permissions','roles']);
         if(Request('orders')){
             $User = $User->orders()->get();
         }
@@ -139,7 +144,7 @@ class UserController extends Controller
     }
 
     public function delete(UserCreateRequest $request, $id = Null){
-            User::destroy($id);
+            User::find($id)->delete();
         return response()->json('کاربر با موفقیت حذف شد');
     }
 
@@ -195,12 +200,50 @@ class UserController extends Controller
     public function dashboard()
     {
         $user =  Auth::user();
-            $orders = $user->orders()->select(['id','created_at','sum'])->get();
+            $orders = $user->orders()->select(['id','created_at','sum'])->take(4)->orderByDesc('created_at')->get();
             $orders_count = $user->orders()->count();
-            $orders_count = "$orders_count : مجموع دوره های خریداری شده ";
 
-            return Response()->json([$orders,$orders_count]);
+            $compelete = $user->compelete();
+
+            $product_id = DB::table('user_video')
+                ->select(['product_id','created_at'])
+                ->where('user_id',$user->id)
+                ->take(4)->orderByDesc('created_at')->get()->toArray();
+            $latest_course=[];
+            foreach ($product_id as $course){
+                $product=Product::find($course->product_id);
+                $latest_course[]=[
+                    'product_name'=>$product->name,
+                    'teacher_name'=>Teacher::find($product->teacher_id)->name,
+                    'created_at'=>$course->created_at
+                ];
+            }
+
+            $percent=[];
+            $recent_products = collect($user->orderProducts())->take(5);
+            foreach($recent_products as $item){
+                $count=DB::table('user_video')
+                    ->where('user_id',Auth::user()->id)->where('product_id',$item->id)->count();
+                $video_count = Product::find($item->id)->videos()->count();
+                $percent[]=[
+                    'product_name'=>$item->name,
+                    'percent'=>round(($count/$video_count)*100,)
+                ];
+            }
+
+
+
+            return Response()->json([
+                'latest_orders'=>$orders,
+                'user_orders'=>$orders_count,
+                'compelete'=>$compelete,
+                'latest_course'=>$latest_course,
+                'watchtime_chart'=>$percent
+
+            ]);
+
     }
+
     public function adminDashboard(){
 
             $role = User::withCount('roles')

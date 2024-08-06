@@ -79,5 +79,9 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(Chapter::class);
     }
+
+    public function videos(){
+        return $this->hasManyThrough(video::class,Chapter::class);
+    }
 }
 

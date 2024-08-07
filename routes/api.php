@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Route;
         route::post('assign',[UserController::class ,'adminAssign'])->middleware('permission:admin.assign')->name('assign');
         route::get('userindex',[UserController::class ,'adminIndex'])->middleware('permission:admin.userindex')->name('index');
         route::get('orderindex',[UserController::class,'adminOrderIndex'])->middleware('permission:admin.orderindex')->name('orderIndex');
+        Route::get('export/{which}/{id?}', [UserController::class, 'exportProduct']);
         route::post('reports',[UserController::class,'adminReports'])->middleware('permission:admin.reports')->name('reports');
         route::post('answercomment',[CommentController::class ,'answer'])->middleware('permission:admin.answercomment')->name('answer');
     });
@@ -122,15 +123,15 @@ Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctu
     Route::post('create', [\App\Http\Controllers\TicketController::class, 'create'])->middleware('permission:tickets.create')->name('create');
     Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->middleware('permission:tickets.index')->name('index');
     Route::put('edit/{id?}', [\App\Http\Controllers\TicketController::class, 'edit'])->middleware('permission:tikcets.edit')->name('edit');
-    Route::get('userticket', [\App\Http\Controllers\TicketController::class, 'userTicket'])->middleware('permission:tikcets.delete')->name('index');
-    Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->middleware('permission:tickets.usertickets')->name('delete');
+    Route::get('userticket', [\App\Http\Controllers\TicketController::class, 'userTicket'])->name('index');
+    Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->middleware('permission:tickets.delete')->name('delete');
 
 
 });
 
 Route::group(['prefix'=>'messages' , 'as'=>'messages' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\MessageController::class, 'create'])->middleware('permission:messages.create')->name('create');
-    Route::get('index', [\App\Http\Controllers\MessageController::class, 'index'])->middleware('permission:messages.index')->name('index');
+    Route::get('index/{id}', [\App\Http\Controllers\MessageController::class, 'index'])->middleware('permission:messages.index')->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\MessageController::class, 'edit'])->middleware('permission:messages.edit')->name('edit');
     Route::delete('delete/{id}', [\App\Http\Controllers\MessageController::class, 'delete'])->middleware('permission:messages.delete')->name('delete');
 

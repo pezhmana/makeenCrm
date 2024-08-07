@@ -52,7 +52,7 @@ class Product extends Model implements HasMedia
     }
 
     public function teacher(){
-        return $this->hasOne(teacher::class);
+        return $this->belongsTo(teacher::class);
     }
 
     public function categories()

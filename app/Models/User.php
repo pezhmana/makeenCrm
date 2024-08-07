@@ -86,12 +86,26 @@ class User extends Authenticatable implements HasMedia
     {
         $data = [];
         $orders = $this->orders()->orderByDesc('created_at')->get();
+
         foreach ($orders as $order) {
-            $data[] = $order->product;
+            $products = $order->product()
+            ->withAvg('comments', 'rating')
+                ->with('categories')
+                ->withCount('orders')
+                ->get();
+
+            foreach ($products as $product) {
+                $teacher = Teacher::find($product->teacher_id);
+                if ($teacher) {
+                    $product->teacher_name = $teacher->name;
+                }
+                $data[] = $product;
+            }
         }
 
         return $data;
     }
+
 
     public function Labels()
     {
@@ -121,8 +135,15 @@ class User extends Authenticatable implements HasMedia
             ->where('user_id',$user->id)
             ->where('label_id',$label)->get()->toArray();
         foreach ($favoriteLabels as $favoriteLabel) {
-            $product = Product::find($favoriteLabel->labelables_id);
+            $product = Product::withAvg('comments', 'rating')
+                ->with('categories')
+                ->withCount('orders')
+                ->find($favoriteLabel->labelables_id);
             if ($product) {
+                $teacher = Teacher::find($product->teacher_id);
+                if ($teacher) {
+                    $product->teacher_name = $teacher->name;
+                }
                 $data[] = $product;
             }
         }

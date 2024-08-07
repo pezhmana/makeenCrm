@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('percent');
             $table->date('from');
             $table->date('to');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

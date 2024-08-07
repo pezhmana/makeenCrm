@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\rating;
+use App\Models\Teacher;
 use http\Url;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class ProductController extends Controller
 
     public function index($id = null) {
         $product = new product();
-        $product = $product->withAvg('comments','rating')->with('categories');
+        $product = $product->withAvg('comments','rating')->with('categories')->with('teacher')->withCount('orders');
         if($id){
             $product = Product::find($id);
             $user =Auth::user()->id;
@@ -62,7 +63,7 @@ class ProductController extends Controller
                     }
                     $user_video = DB::table('user_video')->where('user_id',$user)->where('video_id',$url->id);
                     if(!$user_video->exists()){
-                        Auth::user()->videos()->attach($url->id,['product_id'=>$product->id]);
+                        Auth::user()->videos()->attach($url->id,[   'product_id'=>$product->id]);
                     }
                     $url = $url->url;
                     return response()->json($url);

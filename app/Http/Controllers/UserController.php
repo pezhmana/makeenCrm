@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductsExport;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\OrderIndexResource;
 use App\Http\Resources\OrderResourceCollection;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
@@ -112,10 +113,27 @@ class UserController extends Controller
         $User = Auth::user();
         $User->makeHidden(['permissions','roles']);
         if(Request('orders')){
-            $User = $User->orders()->get();
+            $User= $User->orders()->get();
+            foreach ($User as $order) {
+                $product = Product::find($order->product_id);
+                if ($product) {
+                    $order->product_name = $product->name;
+                    $order->product_image = $product->getFirstMediaUrl('product.image');
+                }
+            }
+            return $User;
         }
+
         if(Request('products')){
             $User = $User->orderProducts();
+            foreach($User as $item){
+                $count=DB::table('user_video')
+                    ->where('user_id',Auth::user()->id)->where('product_id',$item->id)->count();
+                $video_count = Product::find($item->id)->videos()->count();
+                $percent=round(($count/$video_count)*100,);
+                $item->percent = $percent;
+            }
+            return response()->json([$User]);
         }
         if(Request('like')){
             $User = $User->labelProducts();
@@ -185,15 +203,6 @@ class UserController extends Controller
         $User = $request->user();
         User::where('id', $User->id)->update($request->all());
         return response()->json($User);
-    }
-
-    public function profile(Request $request){
-        $User = $request->user();
-        if($request->image){
-            $delete = Media::where('model_type' , 'App\Models\User')->where('model_id' , $User->id)->delete();
-            $media = $User->addMediaFromRequest('image')->toMediaCollection('avatar');
-        }
-        return response()->json($media);
     }
 
 
@@ -352,5 +361,19 @@ class UserController extends Controller
     public function adminReports(Request $request){
         $report = new ProductResourceCollection(Product::all());
         return response()->json($report);
+    }
+
+    public function exportProduct($which,$id)
+    {
+        if($which == 'report'){
+            $product = Product::find($id);
+            $jsonData = new ProductResourceCollection(collect([$product]));
+        }
+        if($which == 'order'){
+            $order = Order::find($id);
+            $jsonData = new OrderResourceCollection(collect([$order]));
+        }
+        $jsonData = $jsonData->toJson();
+        return Excel::download(new ProductsExport($jsonData), 'data.xlsx');
     }
 }

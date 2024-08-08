@@ -4,33 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Exports\ProductsExport;
 use App\Http\Requests\UserCreateRequest;
-use App\Http\Resources\OrderIndexResource;
 use App\Http\Resources\OrderResourceCollection;
 use App\Http\Resources\ProductResourceCollection;
-use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResourceCollection;
 use App\Mail\restorePasswordMail;
-use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Teacher;
 use App\Models\Ticket;
 use App\Models\User;
-use Faker\Core\File;
-use http\Env\Response;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
-use function Laravel\Prompts\select;
-use function Laravel\Prompts\table;
 
 
 class UserController extends Controller
@@ -41,7 +31,7 @@ class UserController extends Controller
         $type = $request->type;
             $phone = $request->phone;
             $exist = User::where('phone',$phone)->first();
-        if($type == 'signin'){
+        if($exist){
             $user =User::select(['id','phone', 'password'])->where('phone', $request->phone)->first();
             if(!$user){
                 return response()->json('کاربر پیدا نشد');
@@ -53,7 +43,7 @@ class UserController extends Controller
 
             return response()->json($response);
         }
-        if($type == 'signup'){
+        if(!$exist){
             $user = User::create($request->toArray());
             $number = rand(10000, 99999);
                 DB::table('code')->insert([

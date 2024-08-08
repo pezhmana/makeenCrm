@@ -57,6 +57,9 @@ Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],f
     Route::put('edit/{id}', [UserController::class, 'edit'])->name('edit');
     Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
     Route::delete('restore/{id}', [UserController::class, 'restore'])->name('restore');
+    Route::delete('forceDelete/{id}', [UserController::class, 'forceDelete'])->name('forceDelete');
+    Route::delete('forceOnlyDelete/{id}', [UserController::class, 'forceOnlyDelete'])->name('forceOnlyDelete');
+    Route::delete('trashed', [UserController::class, 'trashed'])->name('trashed');
 
     Route::post('editpassword', [UserController::class, 'editPassword'])->name('editPassword');
 });

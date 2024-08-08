@@ -261,4 +261,23 @@ class UserController extends Controller
         User::withTrashed()->where('id',$id)->restore();
         return response()->json('restored');
     }
+    public function trashed()
+    {
+       $post = User::onlyTrashed()->where('deleted_at')->get();
+
+        return response()->json($post);
+    }
+// onaie ke dakhele satl ashghal narafano delete mikone kamel hazf mishan
+    public function forceDelete($id)
+    {
+        User::withTrashed()->where('id',$id)->forceDelete();
+
+        return response()->json('کاربر به صورت کامل حذف شد');
+    }
+//faghat onaie ke dakhele satl ashghal raftan ro delete mikone
+    public function forceOnlyDelete($id)
+    {
+       User::onlyTrashed()->where('id',$id)->forceDelete();
+      return response()->json('کاربر به صورت کامل حذف شد');
+  }
 }

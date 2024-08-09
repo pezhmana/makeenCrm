@@ -133,7 +133,7 @@ class UserController extends Controller
     }
 
 
-    public function index(UserCreateRequest $request , $id = Null){
+    public function index(Request $request , $id = Null){
         $User = new User();
         if($id != Null){
             $User = $User->find($id)->first();

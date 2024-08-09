@@ -157,13 +157,6 @@ class ProductController extends Controller
     }
 
 
-        public function addmedia($id , Request $request)
-        {
-            $product = Product::find($id);
-            $collection = DB::table('collections')->find($request->season);
-            $video = $product->addMediaFromRequest('media')->toMediaCollection($collection->collection);
-        }
-
     public function addmedia(Request $request, $id)
     {
         $exist = Chapter::where('title', $request->chapter)->where('product_id', $id)->first();

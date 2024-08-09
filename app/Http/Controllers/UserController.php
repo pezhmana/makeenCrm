@@ -2,40 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductsExport;
 use App\Http\Requests\UserCreateRequest;
-use App\Http\Resources\OrderIndexResource;
 use App\Http\Resources\OrderResourceCollection;
 use App\Http\Resources\ProductResourceCollection;
-use App\Http\Resources\UserResource;
 use App\Http\Resources\UserResourceCollection;
 use App\Mail\restorePasswordMail;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Teacher;
 use App\Models\Ticket;
 use App\Models\User;
-use http\Env\Response;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
-use function Laravel\Prompts\table;
 
 
 class UserController extends Controller
 {
     use HasRoles;
-    public function create(UserCreateRequest $request){
-        $User = User::create(
-            $request->merge(['password' => Hash::make($request->password)])
-                ->toArray());
-        $User->assignRole('user');
-        return response()->json('اطلاعات کاربر با موفقیت ثبت شد');
+
+    public function sign(Request $request){
+        $type = $request->type;
+            $phone = $request->phone;
+            $exist = User::where('phone',$phone)->first();
+        if($exist){
+            $user =User::select(['id','phone', 'password'])->where('phone', $request->phone)->first();
+            if(!$user){
+                return response()->json('کاربر پیدا نشد');
+            }
+            if(!hash::check($request->password,$user->password)){
+                return response()->json('رمز اشتباه است');
+            }
+                $response = $user->createToken('token')->plainTextToken;
+
+            return response()->json($response);
+        }
+        if(!$exist){
+            $user = User::create($request->toArray());
+            $number = rand(10000, 99999);
+                DB::table('code')->insert([
+                    'code' => $number,
+                    'phone' => $user->phone
+                ]);
+                $user->assignRole('user');
+                return response()->json('کد تاییده با موفقیت ارسال شد');
+        }
+        if($type == 'received') {
+            $phoneCodes = DB::table('code')->where('phone', $request->phone)->where('code', $request->code);
+            if ($phoneCodes->exists()) {
+                $User = User::where('phone', $request->phone)->first();
+                $token = $User->createToken('token')->plainTextToken;
+                DB::table('code')->where('phone', $request->phone)->delete();
+                return response()->json($token);
+            }else{
+                return response()->json('کد نامعتبر است');
+            }
+        }
     }
+
 
     public function login(Request $request){
         $type = $request->type;
@@ -52,32 +82,34 @@ class UserController extends Controller
         $token = $User->createToken('token')->plainTextToken;
         return response()->json($token);
         }
+        }
+
+    public function forget(Request $request){
+        $user = User::where('phone', $request->phone);
+        $type =$request->type;
+
         if($type == 'request'){
-            $number=rand(10000,99999);
-            $user = User::where('phone', $request->phone)->first();
-            if($user){
+            $number = rand(10000, 99999);
             DB::table('code')->insert([
-                'code'=>$number,
-                'phone'=>$request->phone
+                'code' => $number,
+                'phone' => $user->phone
             ]);
             return response()->json('کد تاییده با موفقیت ارسال شد');
-            }
-            else{
-                return Response()->json('شماره مورد نظر وجود ندارد');
-            }
         }
         if($type == 'received'){
             $phoneCodes = DB::table('code')->where('phone', $request->phone)->where('code',$request->code);
             if($phoneCodes->exists()){
-                $User = User::where('phone',$request->phone)->first();
+                $User = User::where('phone',$request->phone)
+                    ->update(['password'=>Hash::make($request->password)]);
                 $token = $User->createToken('token')->plainTextToken;
                 DB::table('code')->where('phone' , $request->phone)->delete();
                 return response()->json($token);
             }
             else{
-                return response()->json('کد یا شماره موبایل نامعتبر است');
+                return response()->json('کد نامعتبر است');
             }
         }
+
     }
 
     public function logout(Request $request){
@@ -87,19 +119,29 @@ class UserController extends Controller
 
     public function me(){
         $User = Auth::user();
-
-        if(Request('dashboard')){
-            $orders = $User->orders()->select(['id','created_at','sum'])->get();
-            $orders_count = $User->orders()->count();
-            $orders_count = "$orders_count : مجموع دوره های خریداری شده ";
-            return Response()->json([$orders,$orders_count]);
-        }
-
+        $User->makeHidden(['permissions','roles']);
         if(Request('orders')){
-            $User = $User->orders()->get();
+            $User= $User->orders()->get();
+            foreach ($User as $order) {
+                $product = Product::find($order->product_id);
+                if ($product) {
+                    $order->product_name = $product->name;
+                    $order->product_image = $product->getFirstMediaUrl('product.image');
+                }
+            }
+            return $User;
         }
+
         if(Request('products')){
             $User = $User->orderProducts();
+            foreach($User as $item){
+                $count=DB::table('user_video')
+                    ->where('user_id',Auth::user()->id)->where('product_id',$item->id)->count();
+                $video_count = Product::find($item->id)->videos()->count();
+                $percent=round(($count/$video_count)*100,);
+                $item->percent = $percent;
+            }
+            return response()->json([$User]);
         }
         if(Request('like')){
             $User = $User->labelProducts();
@@ -128,7 +170,7 @@ class UserController extends Controller
     }
 
     public function delete(UserCreateRequest $request, $id = Null){
-            User::destroy($id);
+            User::find($id)->delete();
         return response()->json('کاربر با موفقیت حذف شد');
     }
 
@@ -141,7 +183,7 @@ class UserController extends Controller
 
         }
         if(Request('students')){
-            $role =Role::findByName('user' , 'web')->count();
+            $User =Role::findByName('user' , 'web')->count();
         }
         $User = $User->OrderBy('id' , 'DESC')->paginate(10);
         return response()->json($User);
@@ -171,13 +213,52 @@ class UserController extends Controller
         return response()->json($User);
     }
 
-    public function profile(Request $request){
-        $User = $request->user();
-        if($request->image){
-            $delete = Media::where('model_type' , 'App\Models\User')->where('model_id' , $User->id)->delete();
-            $media = $User->addMediaFromRequest('image')->toMediaCollection('avatar');
-        }
-        return response()->json($media);
+
+    public function dashboard()
+    {
+        $user =  Auth::user();
+            $orders = $user->orders()->select(['id','created_at','sum'])->take(4)->orderByDesc('created_at')->get();
+            $orders_count = $user->orders()->count();
+
+            $compelete = $user->compelete();
+
+            $product_id = DB::table('user_video')
+                ->select(['product_id','created_at'])
+                ->where('user_id',$user->id)
+                ->take(4)->orderByDesc('created_at')->get()->toArray();
+            $latest_course=[];
+            foreach ($product_id as $course){
+                $product=Product::find($course->product_id);
+                $latest_course[]=[
+                    'product_name'=>$product->name,
+                    'teacher_name'=>Teacher::find($product->teacher_id)->name,
+                    'created_at'=>$course->created_at
+                ];
+            }
+
+            $percent=[];
+            $recent_products = collect($user->orderProducts())->take(5);
+            foreach($recent_products as $item){
+                $count=DB::table('user_video')
+                    ->where('user_id',Auth::user()->id)->where('product_id',$item->id)->count();
+                $video_count = Product::find($item->id)->videos()->count();
+                $percent[]=[
+                    'product_name'=>$item->name,
+                    'percent'=>round(($count/$video_count)*100,)
+                ];
+            }
+
+
+
+            return Response()->json([
+                'latest_orders'=>$orders,
+                'user_orders'=>$orders_count,
+                'compelete'=>$compelete,
+                'latest_course'=>$latest_course,
+                'watchtime_chart'=>$percent
+
+            ]);
+
     }
 
     public function adminDashboard(){
@@ -208,9 +289,48 @@ class UserController extends Controller
                 ];
             }
 
+            $product =new Product();
+        $ordersCount = $product->has('orders')->count();
+        $product_count = $product->count();
+
+//       $categ=[];
+//       $category = Category::with('products')->get();
+//       foreach ($category as $cat) {
+//           $categ[]=[
+//             'category_name'=>$cat->name,
+//               'percent'=>(array_sum($cat->ProductOrder())/Order::all()->count())*100,
+//           ];
+//       }
+
+        $products=[];
+       foreach ($product->take(10)->get() as $p) {
+           $products[] = [
+               'product_name' => $p->name,
+               'percent' => ($p->orders()->count()/Order::all()->count())*100  .'%',
+           ];
+       }
+       $rating=[];
+        $rate= Product::take(4)->get();
+        foreach ($rate as $rates) {
+            $rating[]=[
+                'product_name' => $rates->name,
+                'rating'=>($rates->comments->avg('rating'))*20 .'%',
+            ];
+        }
 
 
-            return response()->json([$response,$role]);
+
+
+
+
+            return response()->json([
+                'weekly_sales'=>$response,
+                'student_count'=>$role,
+                'product_sale'=>"$ordersCount / $product_count",
+                'product_rating'=>$rating,
+                'chart_most'=>$products,
+
+            ]);
         }
 
 
@@ -249,5 +369,19 @@ class UserController extends Controller
     public function adminReports(Request $request){
         $report = new ProductResourceCollection(Product::all());
         return response()->json($report);
+    }
+
+    public function exportProduct($which,$id)
+    {
+        if($which == 'report'){
+            $product = Product::find($id);
+            $jsonData = new ProductResourceCollection(collect([$product]));
+        }
+        if($which == 'order'){
+            $order = Order::find($id);
+            $jsonData = new OrderResourceCollection(collect([$order]));
+        }
+        $jsonData = $jsonData->toJson();
+        return Excel::download(new ProductsExport($jsonData), 'data.xlsx');
     }
 }

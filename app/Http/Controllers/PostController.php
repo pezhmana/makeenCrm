@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePostsRequest;
+use App\Http\Requests\EditPostsRequest;
 use App\Models\Post;
 use App\Models\Product;
 use http\Env\Response;
@@ -13,7 +15,7 @@ class PostController extends Controller
 {
 
 
-    public function create(Request $request)
+    public function create(CreatePostsRequest $request)
     {
 
         $post = Post::create($request->merge([
@@ -39,9 +41,9 @@ class PostController extends Controller
         $post = $post->orderByDesc('id')->paginate(12);
         return response()->json($post);
     }
-    public function edit(Request $request, $id){
+    public function edit(EditPostsRequest $request, $id){
         $post = post::where('id', $id)->update($request->toArray());
-        return response()->json($post);
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
     public function delete($id){
         $post = post::where('id',  $id)->delete();

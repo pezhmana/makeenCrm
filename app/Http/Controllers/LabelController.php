@@ -56,9 +56,9 @@ class LabelController extends Controller
             if(!$exist){
             $user->labels()->attach($user->id,
                 ['user_id' =>$user->id,
-                    'labelables_id'=>$request->labelables_id, //id post
+                    'labelables_id'=>$request->labelables_id,
                     'labelables_type'=>'App\Models\Post',
-                    'label_id'=>'1' //label id favorite
+                    'label_id'=>'1'
                 ]);}else{
                 return \response()->json('در لیست شما از قبل وجود دارد');
             }
@@ -67,9 +67,9 @@ class LabelController extends Controller
             if(!$exist){
                 $user->labels()->attach($user->id,
                     ['user_id' =>$user->id,
-                        'labelables_id'=>$request->labelables_id, // id product
+                        'labelables_id'=>$request->labelables_id,
                         'labelables_type'=>'App\Models\Product',
-                        'label_id'=>'1' //label id favorite
+                        'label_id'=>'1'
                     ]);}else{
                 return \response()->json('در لیست شما از قبل وجود دارد');
             }

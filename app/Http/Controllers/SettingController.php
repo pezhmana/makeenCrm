@@ -25,7 +25,7 @@ class SettingController extends Controller
     }
 
     public function edit($key = null ,EditSettingRequest $request ){
-        $setting = Setting::where('key', $key)->update($request->toArray());
-        return response()->json($setting);
+        $setting = Setting::where('key', $key)->update(['value'=>$request->value]);
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
 }

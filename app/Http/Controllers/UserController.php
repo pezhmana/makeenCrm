@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Teacher;
 use App\Models\Ticket;
 use App\Models\User;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +32,7 @@ class UserController extends Controller
         $type = $request->type;
             $phone = $request->phone;
             $exist = User::where('phone',$phone)->first();
-        if($exist){
+        if($type = 'in'){
             $user =User::select(['id','phone', 'password'])->where('phone', $request->phone)->first();
             if(!$user){
                 return response()->json('کاربر پیدا نشد');
@@ -43,7 +44,7 @@ class UserController extends Controller
 
             return response()->json($response);
         }
-        if(!$exist){
+        if($type = 'up'){
             $user = User::create($request->toArray());
             $number = rand(10000, 99999);
                 DB::table('code')->insert([
@@ -69,12 +70,15 @@ class UserController extends Controller
 
     public function forget(Request $request){
         $user = User::where('phone', $request->phone);
+        if(!$user->exists()){
+            return Response()->json('شماره تلفن وجود ندارد');
+        }
         $type =$request->type;
         if($type == 'request'){
             $number = rand(10000, 99999);
             DB::table('code')->insert([
                 'code' => $number,
-                'phone' => $user->phone
+                'phone' => $user->first()->phone
             ]);
             return response()->json('کد تاییده با موفقیت ارسال شد');
         }
@@ -83,7 +87,7 @@ class UserController extends Controller
             if($phoneCodes->exists()){
                 $User = User::where('phone',$request->phone)
                     ->update(['password'=>Hash::make($request->password)]);
-                $token = $User->createToken('token')->plainTextToken;
+                $token = $user->first()->createToken('token')->plainTextToken;
                 DB::table('code')->where('phone' , $request->phone)->delete();
                 return response()->json($token);
             }
@@ -115,16 +119,40 @@ class UserController extends Controller
         }
 
         if(Request('products')){
-            $User = $User->orderProducts();
-            foreach($User as $item){
-                $count=DB::table('user_video')
-                    ->where('user_id',Auth::user()->id)->where('product_id',$item->id)->count();
-                $video_count = Product::find($item->id)->videos()->count();
-                $percent=round(($count/$video_count)*100,);
-                $item->percent = $percent;
+                $User = $User->orderProducts();
+                foreach($User as $item){
+                    $count=DB::table('user_video')
+                        ->where('user_id',Auth::user()->id)->where('product_id',$item->id)->count();
+                    $video_count = Product::find($item->id)->videos()->count();
+                    $percent=round(($count/$video_count)*100,);
+                    $item->percent = $percent;
             }
-            return response()->json([$User]);
-        }
+            if(is_numeric(Request('products'))){
+                $product = Product::find(Request('products'));
+                $user =Auth::user()->id;
+                $purchase = Order::where('user_id',$user)->where('product_id',Request('products'));
+                $chapter = Product::find(Request('products'))->chapters()->first();
+                if($purchase->exists()){
+                    if(Request('video')){
+                        $id=Request('video');
+                        $url =$chapter->videos->find($id);
+                        if($url == null){
+                            return response()->json('همچین ویدیو ای برای دوره وجود ندارد');
+                        }
+                        $user_video = DB::table('user_video')->where('user_id',$user)->where('video_id',$url->id);
+                        if(!$user_video->exists()){
+                            Auth::user()->videos()->attach($url->id,[   'product_id'=>$product->id]);
+                        }
+                        $url = $url->url;
+                        return response()->json($url);
+                    }
+                }else{
+                    $video = 'برای دسترسی باید دوره را خریداری نمایید';
+                }
+                return response()->json([$product,$chapter]);
+            }
+            }
+
         if(Request('like')){
             $User = $User->labelProducts();
         }
@@ -192,7 +220,7 @@ class UserController extends Controller
     public function selfedit(Request $request ){
         $User = $request->user();
         User::where('id', $User->id)->update($request->all());
-        return response()->json($User);
+        return response()->json('اطلاعات شما با موفقیت تغییر یافت');
     }
 
 

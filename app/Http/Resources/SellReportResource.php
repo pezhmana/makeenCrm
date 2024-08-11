@@ -19,10 +19,10 @@ class SellReportResource extends JsonResource
         $from = $request->from;
         $to = $request->to;
         if(is_null($request->from)){
-            $from = '2022-01-01';
+            $from = '2024-01-01';
         }
         if(is_null($to)){
-            $to = '2026-01-01';
+            $to = now();
         }
         return[
             'id'=>$this->id,

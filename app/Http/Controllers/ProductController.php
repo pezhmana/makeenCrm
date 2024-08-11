@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\UsersExport;
 use App\Http\Requests\CreateProductsRequest;
+use App\Http\Requests\EditProductsRequest;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Comment;
@@ -27,6 +28,7 @@ class ProductController extends Controller
     {
 
         $product = product::create($request->toArray());
+
         if($request->image){
             $product->addMediaFromRequest('image')->toMediaCollection("product.image");
         }
@@ -115,9 +117,9 @@ class ProductController extends Controller
 
 
 
-    public function edit(Request $request, $id){
+    public function edit(EditProductsRequest $request, $id){
         $product = product::where('id', $id)->update($request->toArray());
-        return response()->json($product);
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
     public function delete($id){
         $product = product::where('id',  $id)->delete();

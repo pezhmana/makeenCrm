@@ -23,7 +23,7 @@ class ProductsExport implements FromCollection
 
     public function headings(): array
     {
-        dd(array_keys(json_decode($this->jsonData, true)[0]));
+//        dd(array_keys(json_decode($this->jsonData, true)[0]));
         return array_keys(json_decode($this->jsonData, true)[0]);
     }
 }

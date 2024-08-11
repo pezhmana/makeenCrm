@@ -16,13 +16,16 @@ class UserResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        $orders_count = $this->orders ? $this->orders->count() : 0;
+        $orders_sum = $this->orders ? $this->orders->sum('sum') : 0;
+        $order = $this->orders  && $this->orders->isNotEmpty() ? $this->orders->sortByDesc('created_at')->first()->created_at : null;
         return [
             'id'=>$this->id,
             'full_name'=>$this->name.' '.$this->last_name,
             'phone'=>$this->phone,
-            'orders_count' => $this->orders->count(),
-            'orders_sum'=>$this->orders->sum('sum'),
-            'latest_order'=>$this->orders->sortByDesc('created_at')->first()->created_at,
+            'orders_count' => $orders_count,
+            'orders_sum'=>$orders_sum,
+            'latest_order'=>$order,
         ];
     }
 }

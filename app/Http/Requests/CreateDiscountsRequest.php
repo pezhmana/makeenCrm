@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EditSettingRequest extends FormRequest
+class CreateDiscountsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,11 @@ class EditSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value'=>'required'
+            'name'=>'required',
+            'amount'=>'required|numeric',
+            'percent'=>'required',
+            'from'=>'required',
+            'to'=>'required',
         ];
     }
 }

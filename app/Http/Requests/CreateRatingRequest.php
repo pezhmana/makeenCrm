@@ -22,7 +22,7 @@ class CreateRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'rating' => 'required|numeric|min:0|max:5',
         ];
     }
 }

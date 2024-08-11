@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EditSettingRequest extends FormRequest
+class CreateTicketsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,8 @@ class EditSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value'=>'required'
+            'ticket_name'=>'required|min:3',
+            'description'=>'required|max:255',
         ];
     }
 }

@@ -22,7 +22,7 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'description'=>'required|min:1|max:255'
         ];
     }
 }

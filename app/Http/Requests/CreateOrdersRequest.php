@@ -11,7 +11,7 @@ class CreateOrdersRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class CreateOrdersRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+//            'user_id'=>'unique',
+            'product_id'=>'Required',
+            'code'=>'size:5'
         ];
     }
 }

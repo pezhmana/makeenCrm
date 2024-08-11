@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Route;
 
     route::group(['prefix' => 'auth'], function () {
         Route::post('sign', [UserController::class, 'sign'])->name('login');
-        Route::get('logout', [UserController::class, 'logout'])->middleware(['auth:sanctum','permission:auth.index'])->name('logout');
+        Route::get('logout', [UserController::class, 'logout'])->middleware(['auth:sanctum','permission:auth.logout'])->name('logout');
         route::get('dashboard', [UserController::class, 'dashboard'])->middleware(['auth:sanctum','permission:auth.dashboard'])->name('dashboard');
         Route::get('me', [UserController::class, 'me'])->middleware(['permission:auth.me','auth:sanctum'])->name('me');
         Route::post('forget', [UserController::class, 'forget'])->name('create');
@@ -57,9 +57,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix'=>'users' , 'as'=>'user' , 'middleware'=>'auth:sanctum'],function(){
     Route::get('index/{id?}', [UserController::class, 'index'])->middleware('permission:user.index')->name('index');
-    Route::put('edit/{id}', [UserController::class, 'edit'])->middleware('permission:user.edit')->name('edit');
+//    Route::put('edit/{id}', [UserController::class, 'edit'])->middleware('permission:user.edit')->name('edit');
     Route::delete('delete/{id}', [UserController::class, 'delete'])->middleware('permission:user.delete')->name('delete');
-    Route::post('editpassword', [UserController::class, 'editPassword'])->middleware('permission:user.editpassword')->name('editPassword');
+//    Route::post('editpassword', [UserController::class, 'editPassword'])->middleware('permission:user.editpassword')->name('editPassword');
 });
 
 Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
@@ -87,8 +87,8 @@ Route::group(['prefix'=>'posts' , 'as'=>'posts' , 'middleware'=>'auth:sanctum'],
 Route::group(['prefix'=>'orders' , 'as'=>'orders' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\OrderController::class, 'create'])->middleware('permission:orders.create')->name('create');
     Route::get('index/{id?}', [\App\Http\Controllers\OrderController::class, 'index'])->middleware('permission:orders.index')->name('index');
-    Route::put('edit/{id}', [\App\Http\Controllers\OrderController::class, 'edit'])->middleware('permission:orders.edit')->name('edit');
-    Route::delete('delete/{id}', [\App\Http\Controllers\OrderController::class, 'delete'])->middleware('permission:orders.delete')->name('delete');
+//    Route::put('edit/{id}', [\App\Http\Controllers\OrderController::class, 'edit'])->middleware('permission:orders.edit')->name('edit');
+//    Route::delete('delete/{id}', [\App\Http\Controllers\OrderController::class, 'delete'])->middleware('permission:orders.delete')->name('delete');
 
 });
 
@@ -123,7 +123,7 @@ route::group(['prefix'=>'categories' , 'as'=>'categories','middleware'=>'auth:sa
 Route::group(['prefix'=>'tickets' , 'as'=>'tickets' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\TicketController::class, 'create'])->middleware('permission:tickets.create')->name('create');
     Route::get('index', [\App\Http\Controllers\TicketController::class, 'index'])->middleware('permission:tickets.index')->name('index');
-    Route::put('edit/{id?}', [\App\Http\Controllers\TicketController::class, 'edit'])->middleware('permission:tikcets.edit')->name('edit');
+    Route::put('edit/{id?}', [\App\Http\Controllers\TicketController::class, 'edit'])->middleware('permission:tickets.edit')->name('edit');
     Route::get('userticket', [\App\Http\Controllers\TicketController::class, 'userTicket'])->name('index');
     Route::delete('delete/{id}', [\App\Http\Controllers\TicketController::class, 'delete'])->middleware('permission:tickets.delete')->name('delete');
 

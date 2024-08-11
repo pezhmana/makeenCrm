@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCategoriesRequest;
+use App\Http\Requests\EditCategoriesRequest;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Product;
@@ -42,7 +43,7 @@ class CategoryController extends Controller
 
     }
 
-    public function add($id , CreateCategoriesRequest $request){
+    public function add($id , EditCategoriesRequest $request){
         $type = $request->type;
         $exist = DB::table('categoryables')
             ->where('category_id',$request->category_id)->where('categoryable_id',$id);
@@ -70,9 +71,9 @@ class CategoryController extends Controller
         return response()->json('با موفقیا حذف شد');
     }
 
-    public function edit($id , CreateCategoriesRequest $request){
+    public function edit($id , EditCategoriesRequest $request){
         $category = Category::find( $id);
         $category->update($request->toArray());
-        return response()->json($category);
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
 }

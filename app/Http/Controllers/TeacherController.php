@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTeachersRequest;
+use App\Http\Requests\EditTeachersRequest;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateTeachersRequest $request)
     {
 
         $teacher = Teacher::create($request->toArray());
@@ -29,10 +31,10 @@ class TeacherController extends Controller
         return response()->json($teacher);
     }
 
-    public function edit(Request $request, $id)
+    public function edit(EditTeachersRequest $request, $id)
     {
         $teacher = Teacher::where('id', $id)->update($request->toArray());
-        return response()->json($teacher);
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
 
     public function delete($id)

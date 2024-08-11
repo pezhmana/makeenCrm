@@ -43,7 +43,7 @@ class CommentController extends Controller
         return response()->json($comment);
     }
 
-    public function index( CreateCommentRequest $request){
+    public function index(Request $request){
         $type = $request->type;
         $comment = new Comment();
         $comment = $comment ->withCount(['likes as like_count'=>function (Builder $query)

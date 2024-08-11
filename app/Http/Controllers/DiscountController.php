@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateDiscountsRequest;
 use App\Models\Discount;
 use Illuminate\Http\Request;
 use Psy\Util\Str;
 
 class DiscountController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateDiscountsRequest $request)
     {
         $random = bin2hex(random_bytes(3));
         $discount = Discount::create($request->merge([
@@ -28,8 +29,9 @@ class DiscountController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $discount = Discount::where('id', $id)->update($request->toArray());
-        return response()->json($discount);
+       Discount::where('id', $id)->update($request->toArray());
+
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
 
     public function delete($id)

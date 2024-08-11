@@ -15,9 +15,6 @@ class Teacher extends Model implements HasMedia
         'name' ,
         'expertise' ,
         'description' ,
-        'instagram' ,
-        'telegram',
-        'message'
     ];
 
     protected $appends=[

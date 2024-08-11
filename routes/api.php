@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('logout', [UserController::class, 'logout'])->middleware(['auth:sanctum','permission:auth.index'])->name('logout');
         route::get('dashboard', [UserController::class, 'dashboard'])->middleware(['auth:sanctum','permission:auth.dashboard'])->name('dashboard');
         Route::get('me', [UserController::class, 'me'])->middleware(['permission:auth.me','auth:sanctum'])->name('me');
-//        Route::post('create', [UserController::class, 'create'])->withoutMiddleware('auth:sanctum')->name('create');
+        Route::post('forget', [UserController::class, 'forget'])->name('create');
         Route::put('selfedit', [UserController::class, 'selfedit'])->middleware(['auth:sanctum','permission:auth.selfedit'])->name('selfedit');
 //        Route::post('profile', [UserController::class, 'profile'])->name('profile');
     });
@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Route;
         route::post('assign',[UserController::class ,'adminAssign'])->middleware('permission:admin.assign')->name('assign');
         route::get('userindex',[UserController::class ,'adminIndex'])->middleware('permission:admin.userindex')->name('index');
         route::get('orderindex',[UserController::class,'adminOrderIndex'])->middleware('permission:admin.orderindex')->name('orderIndex');
+       route::get('adminindex',[ProductController::class,'adminindex'])->middleware('permission:admin.orderindex')->name('index');
         Route::get('export/{which}/{id?}', [UserController::class, 'exportProduct']);
         route::post('reports',[UserController::class,'adminReports'])->middleware('permission:admin.reports')->name('reports');
         route::post('answercomment',[CommentController::class ,'answer'])->middleware('permission:admin.answercomment')->name('answer');
@@ -69,7 +70,7 @@ Route::group(['prefix'=>'setting' , 'as'=>'setting'],function(){
 });
 Route::group(['prefix'=>'products' , 'as'=>'products' , 'middleware'=>'auth:sanctum'],function(){
     Route::post('create', [\App\Http\Controllers\ProductController::class, 'create'])->middleware('permission:products.create')->name('create');
-    Route::get('index/{id?}', [\App\Http\Controllers\ProductController::class, 'index'])->name('index');
+    Route::get('index/{id?}', [\App\Http\Controllers\ProductController::class, 'index'])->withoutMiddleware('auth:sanctum')->name('index');
     Route::put('edit/{id}', [\App\Http\Controllers\ProductController::class, 'edit'])->middleware('permission:products.edit')->name('edit');
     Route::Post('addmedia/{id}',[ProductController::class , 'addmedia'])->middleware('permission:products.addmedia')->name('addmedia');
     Route::delete('delete/{id}', [\App\Http\Controllers\ProductController::class, 'delete'])->middleware('permission:products.delete')->name('delete');

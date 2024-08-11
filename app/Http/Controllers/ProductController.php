@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Excel;
 use Spatie\MediaLibrary\Conversions\ImageGenerators\Video;
+use Spatie\Permission\Models\Role;
 
 class ProductController extends Controller
 {
@@ -29,17 +30,9 @@ class ProductController extends Controller
         if($request->image){
             $product->addMediaFromRequest('image')->toMediaCollection("product.image");
         }
-        if($request->season){
-            foreach ($request->season as $season){
-                DB::table('collections')->insert([
-                    'collection'=>$product->name.$season
-                ]);
-            }
-        }
-
 
         if($request->suggest){
-            $id= Category::where('name','suggest')->first()->id;
+            $id= Category::where('name','پیشنهادی')->first()->id;
             $product->categories()->attach($id);
         }
 
@@ -48,30 +41,11 @@ class ProductController extends Controller
 
     public function index($id = null) {
         $product = new product();
-        $product = $product->withAvg('comments','rating')->with('categories')->with('teacher')->withCount('orders');
-        if($id){
-            $product = Product::find($id);
-            $user =Auth::user()->id;
-            $purchase = Order::where('user_id',$user)->where('product_id',$id);
-            if($purchase->exists()){
+        $product = $product->withAvg('comments','rating')->with('teacher')->withCount('orders');
+            if($id){
+                $product = Product::find($id);
                 $chapter = Product::find($id)->chapters()->first();
-                if(Request('video')){
-                    $id=Request('video');
-                    $url =$chapter->videos->find($id);
-                    if($url == null){
-                        return response()->json('همچین ویدیو ای برای دوره وجود ندارد');
-                    }
-                    $user_video = DB::table('user_video')->where('user_id',$user)->where('video_id',$url->id);
-                    if(!$user_video->exists()){
-                        Auth::user()->videos()->attach($url->id,[   'product_id'=>$product->id]);
-                    }
-                    $url = $url->url;
-                    return response()->json($url);
-                }
-            }else{
-                $video = 'برای دسترسی باید دوره را خریداری نمایید';
-            }
-            return response()->json([$product,$chapter]);
+                return response()->json([$product,$chapter]);
         }
         if(request("most")){
             $topProductIds = Order::select('product_id', DB::raw('COUNT(*) as total'))
@@ -79,7 +53,8 @@ class ProductController extends Controller
                 ->orderBy('total', 'DESC')
                 ->limit(10)
                 ->pluck('product_id');
-            $product= Product::whereIn('id', $topProductIds)->get();
+            $product= Product::whereIn('id', $topProductIds)
+                ->withAvg('comments','rating')->with('categories')->with('teacher')->withCount('orders')->get();
             return response()->json($product);
         }
         if(Request('search')){
@@ -93,8 +68,8 @@ class ProductController extends Controller
         }
 
         if(Request('member')){
-            $order =new order();
-            $product = $product->withCount('orders');
+            $product =Role::findByName('user' , 'web')->count();
+            return response()->json($product);
         }
         if(Request('discount')){
             $product = $product->where('discount_price','!=',null);
@@ -174,6 +149,21 @@ class ProductController extends Controller
         ]);
 
         return response()->json($video);
+    }
+
+    public function adminindex(){
+        $product = Product::select(['id','name','price','teacher_id'])
+            ->with(['categories'=>function (Builder $query) {
+                $query->select('categories.id', 'categories.name');
+            }])
+            ->with(['teacher'=>function (Builder $query) {
+            $query->select('id','name');
+        }])->get();
+        $product->each(function ($product) {
+            $product->product_image = $product->getProductImageAttribute();
+        });
+
+        return response()->json($product);
     }
 
 

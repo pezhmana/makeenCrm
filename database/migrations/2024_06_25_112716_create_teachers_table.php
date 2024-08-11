@@ -16,9 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('expertise');
             $table->text('description');
-            $table->string('instagram');
-            $table->string('telegram');
-            $table->text('message');
             $table->timestamps();
         });
     }

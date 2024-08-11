@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('ticket_name');
-            $table->enum('priority', ['imprtant','normal'])->default('normal');
+            $table->enum('priority', ['important','normal'])->default('normal');
             $table->unsignedBigInteger('user_id');
             $table->text('description');
             $table->enum('status',['open','running','answered','closed'])->default('open');

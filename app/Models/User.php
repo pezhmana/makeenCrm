@@ -90,7 +90,6 @@ class User extends Authenticatable implements HasMedia
         foreach ($orders as $order) {
             $products = $order->product()
             ->withAvg('comments', 'rating')
-                ->with('categories')
                 ->withCount('orders')
                 ->get();
 
@@ -127,16 +126,23 @@ class User extends Authenticatable implements HasMedia
     ];
 
     public function labelProducts(): array
-    {
-        $data = [];
-        $user = auth()->user();
-        $label = Label::where('name','favorite')->first()->id;
-        $favoriteLabels = DB::table('labelables')
-            ->where('user_id',$user->id)
-            ->where('label_id',$label)->get()->toArray();
-        foreach ($favoriteLabels as $favoriteLabel) {
+{
+    $data = [];
+    $user = auth()->user();
+    $label = Label::where('name', 'favorite')->first()->id;
+    $favoriteLabels = DB::table('labelables')
+        ->where('user_id', $user->id)
+        ->where('label_id', $label)
+        ->get();
+
+    foreach ($favoriteLabels as $favoriteLabel) {
+        if ($favoriteLabel->labelables_type == 'App\Models\Post') {
+            $post = Post::find($favoriteLabel->labelables_id);
+            if ($post) {
+                $data[] = $post;
+            }
+        }if ($favoriteLabel->labelables_type == 'App\Models\Product') {
             $product = Product::withAvg('comments', 'rating')
-                ->with('categories')
                 ->withCount('orders')
                 ->find($favoriteLabel->labelables_id);
             if ($product) {
@@ -147,9 +153,11 @@ class User extends Authenticatable implements HasMedia
                 $data[] = $product;
             }
         }
-
-        return $data;
     }
+
+    return $data;
+}
+
 
     public function likes(){
         return $this->hasMany(Like::class);

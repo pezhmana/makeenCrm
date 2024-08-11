@@ -25,7 +25,7 @@ class OrderController extends Controller
             return response()->json($orders);
         }
     }
-    public function create(Request $request){
+    public function create(CreateOrdersRequest $request){
         $user = Auth::user();
         $product = Product::where('id',$request->product_id)->first();
         $exist = Order::where('user_id',$user->id)->where('product_id',$request->product_id);
@@ -69,17 +69,17 @@ class OrderController extends Controller
         }
         return response()->json($order);
     }
-    public function edit(EditOrdersRequest $request,$id)
-    {
-        $order = order::where('id',$id)->update($request->toArray());
-        return response()->json($order);
-
-    }
-    public function delete($id)
-    {
-        $order = order::destroy($id);
-        return response()->json($order);
-
-    }
+//    public function edit(EditOrdersRequest $request,$id)
+//    {
+//        $order = order::where('id',$id)->update($request->toArray());
+//        return response()->json($order);
+//
+//    }
+//    public function delete($id)
+//    {
+//        $order = order::destroy($id);
+//        return response()->json($order);
+//
+//    }
 
 }

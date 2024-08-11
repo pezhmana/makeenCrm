@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ProductsExport;
+use App\Http\Requests\EditUsersRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\OrderResourceCollection;
 use App\Http\Resources\ProductResourceCollection;
@@ -13,7 +14,6 @@ use App\Models\Product;
 use App\Models\Teacher;
 use App\Models\Ticket;
 use App\Models\User;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,11 +28,10 @@ class UserController extends Controller
 {
     use HasRoles;
 
-    public function sign(Request $request){
-        $type = $request->type;
+    public function sign(UserCreateRequest $request){
             $phone = $request->phone;
             $exist = User::where('phone',$phone)->first();
-        if($type = 'in'){
+        if($request->type == 'in'){
             $user =User::select(['id','phone', 'password'])->where('phone', $request->phone)->first();
             if(!$user){
                 return response()->json('کاربر پیدا نشد');
@@ -44,7 +43,7 @@ class UserController extends Controller
 
             return response()->json($response);
         }
-        if($type = 'up'){
+        if($request->type == 'up'){
             $user = User::create($request->toArray());
             $number = rand(10000, 99999);
                 DB::table('code')->insert([
@@ -54,7 +53,7 @@ class UserController extends Controller
                 $user->assignRole('user');
                 return response()->json('کد تاییده با موفقیت ارسال شد');
         }
-        if($type == 'received') {
+        if($request->type == 'received') {
             $phoneCodes = DB::table('code')->where('phone', $request->phone)->where('code', $request->code);
             if ($phoneCodes->exists()) {
                 $User = User::where('phone', $request->phone)->first();
@@ -68,7 +67,7 @@ class UserController extends Controller
     }
 
 
-    public function forget(Request $request){
+    public function forget(EditUsersRequest $request){
         $user = User::where('phone', $request->phone);
         if(!$user->exists()){
             return Response()->json('شماره تلفن وجود ندارد');
@@ -98,8 +97,8 @@ class UserController extends Controller
 
     }
 
-    public function logout(Request $request){
-        $request->user()->currentAccessToken()->delete();
+    public function logout(){
+        Auth::user()->currentAccessToken()->delete();
         return response()->json('کاربر با موفقیت خارج شد');
     }
 
@@ -179,13 +178,13 @@ class UserController extends Controller
         return response()->json([$User]);
     }
 
-    public function delete(UserCreateRequest $request, $id = Null){
+    public function delete($id = Null){
             User::find($id)->delete();
         return response()->json('کاربر با موفقیت حذف شد');
     }
 
 
-    public function index(UserCreateRequest $request , $id = Null){
+    public function index($id = Null){
         $User = new User();
         if($id != Null){
             $User = $User->find($id)->first();
@@ -199,25 +198,25 @@ class UserController extends Controller
         return response()->json($User);
     }
 
-    public function editPassword(Request $request){
-        $User = $request->user();
-        if(!hash::check($request->password ,$User->password)){
-            return response()->json('رمز اشتباه است');
-        }
-        User::where('id', $User->id)
-            ->update(['password' => Hash::make($request->new_password)]);
-            Mail::to($User->email)->send(new restorePasswordMail($User));
-            return response()->json('رمز با موفقیت تغییر یافت');
+//    public function editPassword(Request $request){
+//        $User = $request->user();
+//        if(!hash::check($request->password ,$User->password)){
+//            return response()->json('رمز اشتباه است');
+//        }
+//        User::where('id', $User->id)
+//            ->update(['password' => Hash::make($request->new_password)]);
+//            Mail::to($User->email)->send(new restorePasswordMail($User));
+//            return response()->json('رمز با موفقیت تغییر یافت');
+//
+//    }
 
-    }
+//    public function edit(Request $request , $id){
+//        $User = User::find($id);
+//        $User->update($request->all());
+//        return response()->json($User);
+//    }
 
-    public function edit(Request $request , $id){
-        $User = User::find($id);
-        $User->update($request->all());
-        return response()->json($User);
-    }
-
-    public function selfedit(Request $request ){
+    public function selfedit(EditUsersRequest $request ){
         $User = $request->user();
         User::where('id', $User->id)->update($request->all());
         return response()->json('اطلاعات شما با موفقیت تغییر یافت');
@@ -345,7 +344,7 @@ class UserController extends Controller
 
 
 
-    public function adminLogin(UserCreateRequest $request)
+    public function adminLogin(EditUsersRequest $request)
     {
         $user = User::where('phone',$request->phone)->first();
         if(!hash::check($request->password ,$user->password )){
@@ -360,7 +359,7 @@ class UserController extends Controller
         return response()->json($token);
     }
 
-    public function adminAssign(UserCreateRequest $request){
+    public function adminAssign(Request $request){
         $user = User::where('phone',$request->phone)->first();
         $user= $user->assignRole('admin');
         return response()->json('رول ادمین با موفقیت داده شد');
@@ -376,7 +375,7 @@ class UserController extends Controller
         return response()->json($order);
     }
 
-    public function adminReports(Request $request){
+    public function adminReports(EditUsersRequest $request){
         $report = new ProductResourceCollection(Product::all());
         return response()->json($report);
     }

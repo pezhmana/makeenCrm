@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTicketsRequest;
 use App\Models\Teacher;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateTicketsRequest $request)
     {
         $user = Auth::user();
 
@@ -35,7 +36,7 @@ class TicketController extends Controller
     public function edit(Request $request, $id)
     {
         $ticket = Ticket::where('id', $id)->update($request->toArray());
-        return response()->json($ticket);
+        return response()->json('تغییرات با موفقیت انجام شد');
     }
 
     public function delete($id)

@@ -24,6 +24,8 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 
+
+
 class UserController extends Controller
 {
     use HasRoles;
@@ -50,6 +52,21 @@ class UserController extends Controller
                     'code' => $number,
                     'phone' => $user->phone
                 ]);
+
+            require 'autoload.php';
+
+            $apiKey = "api-key";
+
+            $client = new \IPPanel\Client($apiKey);
+            $patternValues = [
+                "name" => "IPPANEL",
+            ];
+            $messageId = $client->sendPattern(
+                "xz6aa98o0r1hace",    // pattern code
+                "+9810001",      // originator
+                $user->phone,  // recipient
+                $patternValues,  // pattern values
+            );
                 $user->assignRole('user');
                 return response()->json('کد تاییده با موفقیت ارسال شد');
         }

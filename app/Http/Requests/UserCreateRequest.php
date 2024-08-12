@@ -22,7 +22,12 @@ class UserCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required_if:type,up|max:15',
+            'last_name'=>'required_if:type,up|max:15',
+            'code'=>'required_if:type,received|size:5',
+            'phone' =>'Required|digits:11',
+//            'password' => ['required','min:8','regex:/[a-z]/','regex:/[A-Z]/','regex:/[0-9]/','regex:/^[A-Za-z0-9]+$/']
         ];
     }
+
 }

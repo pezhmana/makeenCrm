@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('discounts', function (Blueprint $table) {
+        Schema::create('videos', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('amount');
-            $table->string('code')->unique();
-            $table->integer('percent');
-            $table->date('from');
-            $table->date('to');
-            $table->softDeletes();
+            $table->string('title');
+            $table->string('url')->nullable();
+            $table->unsignedBigInteger('chapter_id');
             $table->timestamps();
         });
     }
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('discounts');
+        Schema::dropIfExists('videos');
     }
 };

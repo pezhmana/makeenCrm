@@ -16,7 +16,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class User extends Authenticatable implements HasMedia
 
 {
+<<<<<<< HEAD
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia,SoftDeletes;
+=======
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia ,SoftDeletes;
+>>>>>>> 53a7ba753775a5b5a5d63c0a970ace637da4ca85
 
     /**
      * The attributes that are mass assignable.
@@ -86,13 +90,27 @@ class User extends Authenticatable implements HasMedia
     public function orderProducts(): array
     {
         $data = [];
-        $orders = $this->orders()->get();
+        $orders = $this->orders()->orderByDesc('created_at')->get();
+
         foreach ($orders as $order) {
-            $data[] = $order->product;
+            $products = $order->product()
+            ->withAvg('comments', 'rating')
+                ->with('categories')
+                ->withCount('orders')
+                ->get();
+
+            foreach ($products as $product) {
+                $teacher = Teacher::find($product->teacher_id);
+                if ($teacher) {
+                    $product->teacher_name = $teacher->name;
+                }
+                $data[] = $product;
+            }
         }
 
         return $data;
     }
+
 
     public function Labels()
     {
@@ -122,8 +140,15 @@ class User extends Authenticatable implements HasMedia
             ->where('user_id',$user->id)
             ->where('label_id',$label)->get()->toArray();
         foreach ($favoriteLabels as $favoriteLabel) {
-            $product = Product::find($favoriteLabel->labelables_id);
+            $product = Product::withAvg('comments', 'rating')
+                ->with('categories')
+                ->withCount('orders')
+                ->find($favoriteLabel->labelables_id);
             if ($product) {
+                $teacher = Teacher::find($product->teacher_id);
+                if ($teacher) {
+                    $product->teacher_name = $teacher->name;
+                }
                 $data[] = $product;
             }
         }
@@ -134,5 +159,38 @@ class User extends Authenticatable implements HasMedia
     public function likes(){
         return $this->hasMany(Like::class);
     }
+
+    public function videos(){
+        return $this->belongsToMany(video::class)->withTimestamps();
+    }
+
+    public function compelete(){
+        $complete=0;
+        $unComplete=0;
+        $user=auth()->user();
+        $orders =$user->orders()->get();
+        $products=[];
+        foreach ($orders as $order) {
+            $products[] = $order->product;
+        }
+        foreach ($products as $product){
+           $video_count =  $product->videos()->count();
+//           dd($pr);
+           $uservideo_count= DB::table('user_video')
+               ->where('product_id',$product->id)->where('user_id',$user->id)
+               ->count();
+//           dd($uservideo_count);
+           if($uservideo_count == $video_count ){
+               $complete +=1;
+           }else{
+               $unComplete +=1;
+           }
+
+        }
+        return [
+            'complete'=>$complete,
+            'uncomplete'=>$unComplete];
+    }
+
 
 }

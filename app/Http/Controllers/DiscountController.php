@@ -20,9 +20,9 @@ class DiscountController extends Controller
     public function index($id = null)
     {
         if ($id) {
-            $discount = Discount::where('id', $id)->first();
+            $discount = Discount::withTrashed()->where('id', $id)->first();
         } else {
-            $discount = Discount::orderby('id', 'desc')->paginate(10);
+            $discount = Discount::withTrashed()->orderby('id', 'desc')->paginate(10);
         }
         return response()->json($discount);
     }

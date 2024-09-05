@@ -10,6 +10,7 @@ use App\Models\Product;
 use http\Env\Response;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -44,6 +45,11 @@ class CategoryController extends Controller
 
     public function add($id , CreateCategoriesRequest $request){
         $type = $request->type;
+        $exist = DB::table('categoryables')
+            ->where('category_id',$request->category_id)->where('categoryable_id',$id);
+        if($exist->exists()){
+            return response()->json('وجود دارد');
+        }
         if ($type == 'post'){
             $category = Post::find($id);
             $category->categories()->attach($request->category_id);

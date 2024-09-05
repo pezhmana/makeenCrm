@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -51,7 +52,7 @@ class Product extends Model implements HasMedia
     }
 
     public function teacher(){
-        return $this->hasOne(teacher::class);
+        return $this->belongsTo(teacher::class);
     }
 
     public function categories()
@@ -72,6 +73,15 @@ class Product extends Model implements HasMedia
 
     public function ratings(){
         return $this->hasMany(rating::class);
+    }
+
+    public function chapters(): HasMany
+    {
+        return $this->hasMany(Chapter::class);
+    }
+
+    public function videos(){
+        return $this->hasManyThrough(video::class,Chapter::class);
     }
 }
 

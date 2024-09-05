@@ -6,6 +6,7 @@ use App\Http\Requests\CreateMessageRequest;
 use App\Http\Requests\EditMessageRequest;
 use App\Models\Message;
 use App\Models\Teacher;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,10 +24,9 @@ class MessageController extends Controller
 
     public function index($id = null)
     {
-        if ($id) {
-            $message = Message::where('id', $id)->first();
-        } else {
-            $message = Message::orderby('id', 'desc')->paginate(10);
+        $message=Ticket::where('user_id',Auth::user()->id)->where('id',$id)->with('messages')->first();
+        if(!$message){
+            $message='همچین تیکتی وجود ندارد';
         }
         return response()->json($message);
     }

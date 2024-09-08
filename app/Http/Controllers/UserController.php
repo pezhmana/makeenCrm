@@ -46,27 +46,24 @@ class UserController extends Controller
             return response()->json($response);
         }
         if($request->type == 'up'){
-            $user = User::create($request->toArray());
             $number = rand(10000, 99999);
-                DB::table('code')->insert([
-                    'code' => $number,
-                    'phone' => $user->phone
-                ]);
-
-            require 'autoload.php';
-
-            $apiKey = "api-key";
-
+            $apiKey = "lcLfdQZmeU-I1HCkmKm2VpISIkQiFTjIE9m8M6qenCk=";
             $client = new \IPPanel\Client($apiKey);
             $patternValues = [
-                "name" => "IPPANEL",
+                'code'=>$number
             ];
             $messageId = $client->sendPattern(
                 "xz6aa98o0r1hace",    // pattern code
-                "+9810001",      // originator
-                $user->phone,  // recipient
+                "+983000505",      // originator
+                $request->phone,  // recipient
                 $patternValues,  // pattern values
             );
+            $user = User::create($request->toArray());
+
+            DB::table('code')->insert([
+                'code' => $number,
+                'phone' => $user->phone
+            ]);
                 $user->assignRole('user');
                 return response()->json('کد تاییده با موفقیت ارسال شد');
         }
@@ -368,7 +365,7 @@ class UserController extends Controller
             return response()->json('رمز ورود اشتباه است');
         }else{
             if($user->hasRole('admin')){
-                $token =$user->createToken('token')->plainTextToken;
+                $token =$user->createToken('admin')->plainTextToken;
             }else{
                 $token = 'شما اجازه مورد نیاز را ندارید';
             }

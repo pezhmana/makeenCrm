@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class SettingTableSeeder extends Seeder
 {
@@ -60,10 +62,16 @@ class SettingTableSeeder extends Seeder
             'name'=>'favorite'
         ]);
 
-        DB::table('model_has_roles')->insert([
-            'role_id'=>4,
-            'model_type'=>'App\Models\User',
-            'model_id'=>1
+
+
+       $admin =  User::create([
+            'name'=>'admin',
+            'last_name'=>'admin',
+            'phone'=>'09120413170',
+            'password'=>Hash::make('1234'),
         ]);
+       $admin->assignRole('admin');
+
+
     }
 }

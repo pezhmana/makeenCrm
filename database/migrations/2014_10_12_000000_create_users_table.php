@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('gender',['woman','man'])->nullable();
             $table->string('email')->nullable();
             $table->date('birth_date')->nullable();
-            $table->bigInteger('phone')->unique();
+            $table->string('phone')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->softDeletes();

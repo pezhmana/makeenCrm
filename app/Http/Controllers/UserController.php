@@ -47,17 +47,17 @@ class UserController extends Controller
         }
         if($request->type == 'up'){
             $number = rand(10000, 99999);
-            $apiKey = "lcLfdQZmeU-I1HCkmKm2VpISIkQiFTjIE9m8M6qenCk=";
-            $client = new \IPPanel\Client($apiKey);
-            $patternValues = [
-                'code'=>$number
-            ];
-            $messageId = $client->sendPattern(
-                "xz6aa98o0r1hace",    // pattern code
-                "+983000505",      // originator
-                $request->phone,  // recipient
-                $patternValues,  // pattern values
-            );
+            // $apiKey = "lcLfdQZmeU-I1HCkmKm2VpISIkQiFTjIE9m8M6qenCk=";
+            // $client = new \IPPanel\Client($apiKey);
+            // $patternValues = [
+            //     'code'=>$number
+            // ];
+            // $messageId = $client->sendPattern(
+            //     "xz6aa98o0r1hace",    // pattern code
+            //     "+983000505",      // originator
+            //     $request->phone,  // recipient
+            //     $patternValues,  // pattern values
+            // );
             $user = User::create($request->toArray());
 
             DB::table('code')->insert([
